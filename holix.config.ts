@@ -1,9 +1,14 @@
-import { defineHolixConfig } from '@holix/cli/config'
 import react from '@vitejs/plugin-react'
+import tailwindcss from "@tailwindcss/vite"
+import path from "path"
 
-export default defineHolixConfig({
+// @ts-ignore
+export default {
   app: {
     entry: 'src/main.ts', // 客户端入口
   },
-  vitePlugins: [react() as any], // Vite 插件
-})
+  alias: {
+    "@": path.resolve(__dirname, "./src"),
+  },
+  vitePlugins: [react(), tailwindcss()], // Vite 插件
+}

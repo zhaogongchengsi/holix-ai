@@ -6,12 +6,23 @@
     "strict": true,
     "jsx": "react-jsx",
     "esModuleInterop": true,
+    "types": [
+      "vite/client"
+    ],
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "types": ["vite/client"],
     "sourceMap": true,
     "resolveJsonModule": true,
-    "paths": {}
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "ignoreDeprecations": "6.0"
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "./holix.config.ts"
+  ]
 }
