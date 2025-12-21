@@ -4,8 +4,8 @@ import { BrowserWindow } from 'electron'
 export class AppWindow extends BrowserWindow {
 	constructor() {
 		super({
-			width: 800,
-			height: 600,
+			width: 1200,
+			height: 700,
 			show: false,
 			frame: import.meta.env.DEV,
 		})
