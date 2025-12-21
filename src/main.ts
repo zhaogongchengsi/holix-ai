@@ -1,24 +1,12 @@
-import { app, BrowserWindow } from 'electron'
+import { app } from 'electron'
+import { AppWindow } from './node/window'
 
-let win: BrowserWindow | null = null
+let window: AppWindow | null = null
 
-console.log('Main process started')
-
-async function createWindow() {
+async function setup() {
 	await app.whenReady()
-	win = new BrowserWindow({
-		width: 800,
-		height: 600,
-	})
-	const url = import.meta.env.BASE_URL + 'index.html'
-
-	if (import.meta.env.DEV) {
-		win.loadURL(url)
-	}
-	else {
-		win.loadFile(url)
-	}
-
+	window = new AppWindow()
+	await window.showWhenReady()
 }
 
-createWindow()
+setup()
