@@ -17,6 +17,7 @@ export class Store<D> {
 	path: string
 	name: string
 	defaultData: D
+	isInitialized = false
 	constructor(opt: StoreOptions<D>) {
 		this.name = opt.name
 		if (nameSet.has(this.name)) {
@@ -28,12 +29,16 @@ export class Store<D> {
 	}
 
 	async init() {
+		if (this.isInitialized) {
+			return
+		}
 		await ensureFile(this.path, JSON.stringify(this.defaultData))
 		const db: Low<D> = await JSONFilePreset(
 			this.path,
 			this.defaultData,
 		)
 		this.db = db
+		this.isInitialized = true
 	}
 
 	getStore() {

@@ -5,13 +5,33 @@ import { app } from 'electron'
 import { resolve } from 'path'
 import { databaseUrl } from '../constant'
 
+const promiser = Promise.withResolvers<void>()
+
 export const db = drizzle({
 	connection: databaseUrl,
 })
 
+let hasMigrated = false
 export async function migrateDb() {
+	if (hasMigrated) {
+		return
+	}
 	const dir = resolve(app.isPackaged ? process.resourcesPath : process.cwd(), 'drizzle')
-	migrate(db, {
-		migrationsFolder: dir,
-	})
+	try {
+		await migrate(db, { migrationsFolder: dir })
+		hasMigrated = true
+		promiser.resolve()
+	} catch (err) {
+		promiser.reject(err)
+		throw err
+	}
+}
+
+export async function waitForDbMigrations() {
+	return promiser.promise
+}
+
+export async function getDatabase() {
+	await waitForDbMigrations()
+	return db
 }

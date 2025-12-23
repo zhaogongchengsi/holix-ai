@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@holix/router':
+        specifier: ^0.0.2
+        version: 0.0.2
       '@libsql/client':
         specifier: ^0.15.15
         version: 0.15.15
@@ -35,6 +38,9 @@ importers:
       fs-extra:
         specifier: ^11.3.3
         version: 11.3.3
+      ky:
+        specifier: ^1.14.1
+        version: 1.14.1
       lowdb:
         specifier: ^7.0.1
         version: 7.0.1
@@ -752,6 +758,9 @@ packages:
 
   '@holix/ipc@0.2.0':
     resolution: {integrity: sha512-GzNZgeQ8ghNqxjgxD8TxnqdwgdO/dKS12jsWmp/a5/VkDrI+xV9VAmkkQj0rD6Veg4zqHCDZ4KV+NEdUtEuC2w==}
+
+  '@holix/router@0.0.2':
+    resolution: {integrity: sha512-Z5m73FvDB419v7d5raNoTWaZ2GbIMoOjkPzjNeMmpotiKe97gtj8dhhARtoifqSND6/r5i5BhiwTPnBNLXJAdQ==}
 
   '@hono/node-server@1.19.7':
     resolution: {integrity: sha512-vUcD0uauS7EU2caukW8z5lJKtoGMokxNbJtBiwHgpqxEXokaHCBkQUmCHhjFB1VUTWdqj25QoMkMKzgjq+uhrw==}
@@ -1612,6 +1621,9 @@ packages:
 
   '@vue/shared@3.5.26':
     resolution: {integrity: sha512-7Z6/y3uFI5PRoKeorTOSXKcDj0MSasfNNltcslbFrPpcw6aXRUALq4IfJlaTRspiWIUOEZbrpM+iQGmCOiWe4A==}
+
+  '@zunh/onion@0.1.1-beta.2':
+    resolution: {integrity: sha512-9m60LGQ0DXflzzjCG123gr8eOwtAnVqA2lR63R/2fYn5iUYeagxT6fiQTAPjIz1dCj57yi1MD45damGqU+rfOw==}
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -2563,6 +2575,10 @@ packages:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
 
+  ky@1.14.1:
+    resolution: {integrity: sha512-hYje4L9JCmpEQBtudo+v52X5X8tgWXUYyPcxKSuxQNboqufecl9VMWjGiucAFH060AwPXHZuH+WB2rrqfkmafw==}
+    engines: {node: '>=18'}
+
   libsql@0.5.22:
     resolution: {integrity: sha512-NscWthMQt7fpU8lqd7LXMvT9pi+KhhmTHAJWUB/Lj6MWa0MKFv0F2V4C6WKKpjCVZl0VwcDz4nOI3CyaT1DDiA==}
     cpu: [x64, arm64, wasm32, arm]
@@ -2962,6 +2978,9 @@ packages:
   quick-lru@5.1.1:
     resolution: {integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==}
     engines: {node: '>=10'}
+
+  radix3@1.1.2:
+    resolution: {integrity: sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA==}
 
   range-parser@1.2.1:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
@@ -4070,6 +4089,11 @@ snapshots:
 
   '@holix/ipc@0.2.0': {}
 
+  '@holix/router@0.0.2':
+    dependencies:
+      '@zunh/onion': 0.1.1-beta.2
+      radix3: 1.1.2
+
   '@hono/node-server@1.19.7(hono@4.11.1)':
     dependencies:
       hono: 4.11.1
@@ -4853,6 +4877,8 @@ snapshots:
       vue: 3.5.26(typescript@5.9.3)
 
   '@vue/shared@3.5.26': {}
+
+  '@zunh/onion@0.1.1-beta.2': {}
 
   accepts@2.0.0:
     dependencies:
@@ -5756,6 +5782,8 @@ snapshots:
 
   kleur@4.1.5: {}
 
+  ky@1.14.1: {}
+
   libsql@0.5.22:
     dependencies:
       '@neon-rs/load': 0.0.4
@@ -6135,6 +6163,8 @@ snapshots:
   queue-microtask@1.2.3: {}
 
   quick-lru@5.1.1: {}
+
+  radix3@1.1.2: {}
 
   range-parser@1.2.1: {}
 
