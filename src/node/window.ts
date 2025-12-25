@@ -21,6 +21,10 @@ export class AppWindow extends BrowserWindow {
 		const url = import.meta.env.BASE_URL
 		import.meta.env.DEV ? this.loadURL(url) : this.loadFile(url)
 
+		if (import.meta.env.DEV) {
+			this.webContents.openDevTools({ mode: "right" })
+		}
+
 		this.on('resized', async () => {
 			const [width, height] = this.getSize()
 			await configStore.set('window', { width, height })

@@ -2,3 +2,9 @@
 	width: 100vw;
 	height: 100vh;
 }
+
+:root {
+	--app-header-height: 56px;
+	--app-sidebar-width: 260px;
+	--app-chat-width: calc(100vw - var(--app-sidebar-width));
+}

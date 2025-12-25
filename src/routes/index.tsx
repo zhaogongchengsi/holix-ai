@@ -1,10 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-
-function Index () {
-	return <div className="p-4">Welcome to Holix AI!</div>
+function Index() {
+	return (
+		<>
+			<div>
+				chat
+			</div>
+		</>
+	);
 }
 
 export const Route = createFileRoute("/")({
-  component: Index,
+	component: Index,
 });
