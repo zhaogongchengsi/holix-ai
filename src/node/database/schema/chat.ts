@@ -1,5 +1,7 @@
 import * as t from "drizzle-orm/sqlite-core";
-import { index, sqliteTable as table } from "drizzle-orm/sqlite-core";
+import { index, sqliteTableCreator  } from "drizzle-orm/sqlite-core";
+
+export const sqliteTable = sqliteTableCreator((name) => name);
 
 export type DraftSegment = {
 	/** 流内唯一 ID（顺序可恢复） */
@@ -43,7 +45,7 @@ export type PendingMessage = {
 
 type DraftContent = DraftSegment[]
 
-export const chats = table(
+export const chats = sqliteTable(
 	"chat",
 	{
 		/** 数据库主键 */
@@ -102,7 +104,7 @@ export const chats = table(
 	})
 )
 
-export const messages = table(
+export const messages = sqliteTable(
 	"messages",
 	{
 		/** 数据库主键 */
