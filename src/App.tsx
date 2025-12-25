@@ -7,7 +7,7 @@ export default function App() {
 	return (
 		<ThemeProvider>
 			<RouterProvider router={router} defaultPreload="intent" />
-			<TanStackRouterDevtools router={router} />
+	
 		</ThemeProvider>
 	);
 }
