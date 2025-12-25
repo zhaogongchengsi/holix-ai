@@ -18,7 +18,7 @@ export class AppWindow extends BrowserWindow {
 			trafficLightPosition: { x: 10, y: 10 },
 		})
 	
-		const url = import.meta.env.BASE_URL + 'index.html'
+		const url = import.meta.env.BASE_URL + 'index.html/'
 		import.meta.env.DEV ? this.loadURL(url) : this.loadFile(url)
 
 		this.on('resized', async () => {

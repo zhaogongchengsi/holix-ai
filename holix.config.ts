@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react'
 import tailwindcss from "@tailwindcss/vite"
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import path from "path"
 
 // @ts-ignore
@@ -10,5 +11,14 @@ export default {
   alias: {
     "@": path.resolve(__dirname, "./src"),
   },
-  vitePlugins: [react(), tailwindcss()], // Vite 插件
+  vitePlugins: [
+    tanstackRouter({
+      target: 'react',
+      autoCodeSplitting: true,
+      routesDirectory: "./src/pages",
+      generatedRouteTree: "./src/routeTree.gen.ts",
+    }),
+    react(),
+    tailwindcss()
+  ],
 }

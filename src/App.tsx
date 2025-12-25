@@ -1,16 +1,13 @@
-import { ModeToggle } from "./components/mode-toggle";
-import { Button } from "./components/ui/button";
 import { ThemeProvider } from "@/components/theme-provider";
+import { router } from "./router";
+import { RouterProvider } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 export default function App() {
   return (
     <ThemeProvider>
-      <div className="app-root">
-        <h1>Holix AI — React 已就绪</h1>
-        <p>这是一个最小的 React + TypeScript 入口示例。</p>
-        <Button size="lg">点击我</Button>
-        <ModeToggle />
-      </div>
+      <RouterProvider router={router} defaultPreload="intent" />
+      <TanStackRouterDevtools router={router} />
     </ThemeProvider>
   );
 }
