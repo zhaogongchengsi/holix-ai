@@ -24,17 +24,23 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      # 3. 安装依赖
+      # 3. 安装 pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      # 4. 安装依赖（严格按锁文件）
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
         shell: bash
 
-      # 4. electron-rebuild
+      # 5. electron-rebuild
       - name: Rebuild native modules
         run: npx electron-rebuild --version 39.2.7 --arch x64
         shell: bash
 
-      # 5. 创建目标目录并拷贝 sqlite3.node
+      # 6. 创建目标目录并拷贝 sqlite3.node
       - name: Copy compiled .node
         run: |
           DEST_DIR=resources/native/${{ matrix.os }}-x64
@@ -42,7 +48,7 @@ jobs:
           cp node_modules/libsql/sqlite3/build/Release/sqlite3.node $DEST_DIR/
         shell: bash
 
-      # 6. 上传 artifact
+      # 7. 上传 artifact（v4）
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
