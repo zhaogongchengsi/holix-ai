@@ -47,10 +47,14 @@ export function createChannel() {
 						connectionLoop.delete(connectionId);
 					}
 				}, 15000);
-				return () => {
+				const cleanup = () => {
 					clearInterval(heartbeat);
 					connectionLoop.delete(connectionId);
 				};
+
+				ctx.req.signal?.addEventListener("abort", cleanup)
+
+				return cleanup
 			},
 			cancel() {
 				connectionLoop.delete(connectionId);
