@@ -11,7 +11,7 @@ class ConnectionSender {
 		this.connect = connect;
 	}
 
-	sendMessage(data: any) {
+	sendMessage(data: unknown) {
 		const message = `data: ${JSON.stringify(data)}\n\n`;
 		this.enqueue(message);
 	}
@@ -42,7 +42,7 @@ export function createChannel() {
 				const heartbeat = setInterval(() => {
 					try {
 						sender.heartbeat();
-					} catch (err) {
+					} catch (_: unknown) {
 						clearInterval(heartbeat);
 						connectionLoop.delete(connectionId);
 					}
@@ -77,7 +77,7 @@ export function createChannel() {
  * 
  * @param data 需要发送的数据
  */
-export function sendChannelMessage<T = any>(data: T) {
+export function sendChannelMessage<T = unknown>(data: T) {
 	for (const [, connection] of connectionLoop) {
 		connection.sendMessage(data);
 	}
