@@ -30,9 +30,14 @@ jobs:
         with:
           version: 8
 
-      # 4. 安装依赖（严格按锁文件）
+      # 4. 安装依赖（兼容 lockfile 存在与否）
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          else
+            pnpm install --no-frozen-lockfile
+          fi
         shell: bash
 
       # 5. electron-rebuild
