@@ -44,7 +44,7 @@ jobs:
 
       # 6. 上传 artifact
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sqlite3-node-${{ matrix.os }}
           path: resources/native/${{ matrix.os }}-x64/sqlite3.node
