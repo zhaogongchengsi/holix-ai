@@ -1,4 +1,4 @@
-type SSEEventHandler = (data: any, rawEvent: MessageEvent) => void
+type SSEEventHandler = (data: unknown, rawEvent: MessageEvent) => void
 type SSEVoidHandler = (event: Event) => void
 
 class HolixSSEClient {
@@ -7,13 +7,11 @@ class HolixSSEClient {
 	private listeners = new Map<string, Set<SSEEventHandler>>()
 	private openHandlers = new Set<SSEVoidHandler>()
 	private errorHandlers = new Set<SSEVoidHandler>()
-
 	constructor() {}
 
 	/** 确保连接只建立一次 */
 	private ensureConnected() {
 		if (this.source) return
-
 		this.source = new EventSource(this.url)
 
 		this.source.addEventListener('open', (e) => {

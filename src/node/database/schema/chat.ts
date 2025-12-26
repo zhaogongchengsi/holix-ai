@@ -1,49 +1,50 @@
+import { type InferInsertModel, type InferSelectModel, sql } from "drizzle-orm";
 import * as t from "drizzle-orm/sqlite-core";
-import { index, sqliteTableCreator  } from "drizzle-orm/sqlite-core";
+import { index, sqliteTableCreator } from "drizzle-orm/sqlite-core";
 
 export const sqliteTable = sqliteTableCreator((name) => name);
 
 export type DraftSegment = {
 	/** 流内唯一 ID（顺序可恢复） */
-	id: string
+	id: string;
 
 	/** 本段内容（增量 or 完整） */
-	content: string
+	content: string;
 
 	/** 阶段 */
-	phase: "thinking" | "answer" | "tool" | "partial"
+	phase: "thinking" | "answer" | "tool" | "partial";
 
 	/** 来源 */
-	source: "model" | "tool" | "system"
+	source: "model" | "tool" | "system";
 
 	// 是否合并
-	committed?: boolean
+	committed?: boolean;
 
 	/** 是否为增量 chunk */
-	delta?: boolean
+	delta?: boolean;
 
 	/** 时间戳 */
-	createdAt: number
-}
+	createdAt: number;
+};
 
 export type PendingMessage = {
 	/** 本地唯一 ID */
-	id: string
+	id: string;
 
 	/** 用户输入内容（支持 Markdown / Code） */
-	content: string
+	content: string;
 
 	/** 是否被选中准备发送 */
-	ready?: boolean
+	ready?: boolean;
 
 	/** 创建时间 */
-	createdAt: number
+	createdAt: number;
 
 	/** 最近编辑时间 */
-	updatedAt?: number
-}
+	updatedAt?: number;
+};
 
-type DraftContent = DraftSegment[]
+type DraftContent = DraftSegment[];
 
 export const chats = sqliteTable(
 	"chat",
@@ -75,37 +76,34 @@ export const chats = sqliteTable(
 			.default("active"),
 
 		/** 是否置顶 */
-		pinned: t.integer("pinned", { mode: "boolean" })
-			.notNull()
-			.default(false),
+		pinned: t.integer("pinned", { mode: "boolean" }).notNull().default(false),
 
 		/** 是否归档 */
-		archived: t.integer("archived", { mode: "boolean" })
+		archived: t
+			.integer("archived", { mode: "boolean" })
 			.notNull()
 			.default(false),
 
 		/** 创建时间（毫秒） */
-		createdAt: t.integer("created_at").notNull(),
+		createdAt: t.integer("created_at").notNull().default(sql`(strftime('%s','now') * 1000)`),
 
 		/** 最近更新时间（左侧列表排序核心） */
-		updatedAt: t.integer("updated_at").notNull(),
+		updatedAt: t.integer("updated_at").notNull().default(sql`(strftime('%s','now') * 1000)`),
 		/** 当前会话最后一条消息序号（增量同步用） */
 		lastSeq: t.integer("last_seq").notNull().default(0),
 		/** 待发送消息列表（本地缓存） */
-		pendingMessages: t
-			.text("pending_messages")
-			.$type<PendingMessage[]>(),
+		pendingMessages: t.text("pending_messages").$type<PendingMessage[]>(),
 		// 会话预设 / 系统提示
-		prompts: t.text("prompts").$type<string[]>().notNull().default([])
+		prompts: t.text("prompts").$type<string[]>().notNull().default([]),
 	},
 	(table) => ({
 		chatUidIdx: index("idx_chat_uid").on(table.uid),
 		chatUpdateIdx: index("idx_chat_updated").on(table.updatedAt),
-	})
-)
+	}),
+);
 
-export const messages = sqliteTable(
-	"messages",
+export const message = sqliteTable(
+	"message",
 	{
 		/** 数据库主键 */
 		id: t.integer("id").primaryKey({ autoIncrement: true }),
@@ -123,9 +121,11 @@ export const messages = sqliteTable(
 			.references(() => chats.uid, { onDelete: "cascade" }),
 
 		/** 模型视角角色 */
-		role: t.text("role", {
-			enum: ["user", "assistant", "system", "tool"],
-		}).notNull(),
+		role: t
+			.text("role", {
+				enum: ["user", "assistant", "system", "tool"],
+			})
+			.notNull(),
 
 		/** 系统 / 产品语义类型 */
 		kind: t.text("kind").notNull(),
@@ -149,7 +149,8 @@ export const messages = sqliteTable(
 		model: t.text("model"),
 
 		/** 是否参与搜索 */
-		searchable: t.integer("searchable", { mode: "boolean" })
+		searchable: t
+			.integer("searchable", { mode: "boolean" })
 			.notNull()
 			.default(true),
 
@@ -173,14 +174,25 @@ export const messages = sqliteTable(
 		error: t.text("error"),
 
 		/** 创建时间 */
-		createdAt: t.integer("created_at").notNull(),
+		createdAt: t
+			.integer("created_at")
+			.notNull()
+			.default(sql`(strftime('%s','now') * 1000)`),
 
 		/** 更新时间 */
-		updatedAt: t.integer("updated_at").notNull(),
+		updatedAt: t
+			.integer("updated_at")
+			.notNull()
+			.default(sql`(strftime('%s','now') * 1000)`),
 	},
 	(table) => ({
 		chatIdx: index("idx_messages_chat").on(table.chatUid),
 		chatSeqIdx: index("idx_messages_chat_seq").on(table.chatUid, table.seq),
 		timeIdx: index("idx_messages_time").on(table.createdAt),
-	})
-)
+	}),
+);
+
+export type Chat = InferSelectModel<typeof chats>;
+export type Message = InferSelectModel<typeof message>;
+export type ChatInsert = InferInsertModel<typeof chats>;
+export type MessageInsert = InferInsertModel<typeof message>;
