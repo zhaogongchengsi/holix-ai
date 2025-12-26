@@ -1,6 +1,30 @@
 import { randomUUID } from "node:crypto";
 import type { RouteHandler } from "@holix/router";
 
+class ConnectionSender {
+	id: string;
+	connect: ReadableStreamDefaultController
+	constructor(
+		id: string, connect: ReadableStreamDefaultController
+	) {
+		this.id = id;
+		this.connect = connect;
+	}
+
+	sendMessage(data: any) {
+		const message = `data: ${JSON.stringify(data)}\n\n`;
+		this.enqueue(message);
+	}
+
+	enqueue(data: string) {
+		this.connect.enqueue(new TextEncoder().encode(data));
+	}
+
+	heartbeat() {
+		this.enqueue(`: heartbeat\n\n`);
+	}
+}
+
 const connectionLoop = new Map<string, ConnectionSender>();
 
 export function createChannel() {
@@ -49,35 +73,12 @@ export function createChannel() {
 	return handle;
 }
 
-class ConnectionSender {
-	id: string;
-	connect: ReadableStreamDefaultController
-	constructor(
-		id: string, connect: ReadableStreamDefaultController
-	) {
-		this.id = id;
-		this.connect = connect;
-	}
-
-	sendMessage(data: any) {
-		const message = `data: ${JSON.stringify(data)}\n\n`;
-		this.enqueue(message);
-	}
-
-	enqueue(data: string) {
-		this.connect.enqueue(new TextEncoder().encode(data));
-	}
-
-	heartbeat() {
-		this.enqueue(`: heartbeat\n\n`);
+/**
+ * 
+ * @param data 需要发送的数据
+ */
+export function sendChannelMessage<T = any>(data: T) {
+	for (const [, connection] of connectionLoop) {
+		connection.sendMessage(data);
 	}
 }
-
-setInterval(() => {
-	connectionLoop.forEach((conn) => {
-		conn.sendMessage({
-			type: "heartbeat",
-			message: "heartbeat",
-		})
-	})
-}, 3000)
