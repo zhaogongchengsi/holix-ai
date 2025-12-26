@@ -1,11 +1,10 @@
 {
 	"appId": "me.zhaozunhong.holix-ai",
 	"files": [
-		"app_dist/**/*",
 		"node_modules/**/*",
 		"public/**/*",
 		"package.json",
-		"!.holixai"
+		".holixai/**/*"
 	],
 	"artifactName": "holix-ai-setup.${version}.exe",
 	"directories": {
