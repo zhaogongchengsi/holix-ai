@@ -1,15 +1,15 @@
-import { app, protocol } from 'electron'
-import { AppWindow } from './node/window'
-import { migrateDb } from './node/database/connect'
-import { logger } from './node/logger'
-import { createRouter } from '@holix/router'
-import { configRegisterRouter, configStore } from './node/config'
+import { createRouter } from "@holix/router";
+import { app, protocol } from "electron";
+import { migrateDb } from "./node/database/connect";
+import { configRegisterRouter, configStore } from "./node/platform/config";
+import { logger } from "./node/platform/logger";
+import { AppWindow } from "./node/platform/window";
 
-process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 
 protocol.registerSchemesAsPrivileged([
 	{
-		scheme: 'holix',
+		scheme: "holix",
 		privileges: {
 			standard: true,
 			secure: true,
@@ -18,38 +18,38 @@ protocol.registerSchemesAsPrivileged([
 			allowServiceWorkers: true,
 		},
 	},
-])
+]);
 
-const router = createRouter()
+const router = createRouter();
 
-configRegisterRouter(router)
+configRegisterRouter(router);
 
-let window: AppWindow | null = null
-const gotSingleInstanceLock = app.requestSingleInstanceLock()
+let window: AppWindow | null = null;
+const gotSingleInstanceLock = app.requestSingleInstanceLock();
 
 if (!gotSingleInstanceLock) {
-	app.quit()
+	app.quit();
 }
 
-app.on('second-instance', () => {
-	logger.info('Second instance detected. Bringing the main window to the front.')
+app.on("second-instance", () => {
+	logger.info(
+		"Second instance detected. Bringing the main window to the front.",
+	);
 	if (window?.isMinimized()) {
-		window?.restore()
+		window?.restore();
 	}
-	window?.focus()
-})
+	window?.focus();
+});
 
 async function bootstrap() {
-	await app.whenReady()
-	await configStore.init()
-	window = new AppWindow()
-	router.register(window.webContents.session.protocol)
-	await window.showWhenReady()
+	await app.whenReady();
+	await configStore.init();
+	window = new AppWindow();
+	router.register(window.webContents.session.protocol);
+	await window.showWhenReady();
 }
 
-migrateDb()
-bootstrap()
-.catch((err) => {
-	logger.error('Failed to setup application:', err)
-})
-
+migrateDb();
+bootstrap().catch((err) => {
+	logger.error("Failed to setup application:", err);
+});
