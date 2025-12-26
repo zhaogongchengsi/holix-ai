@@ -52,6 +52,7 @@
     "@vitejs/plugin-react": "^5.1.2",
     "drizzle-kit": "^0.31.8",
     "electron": "^39.2.7",
+    "electron-rebuild": "^3.2.9",
     "shadcn": "^3.6.2",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3",

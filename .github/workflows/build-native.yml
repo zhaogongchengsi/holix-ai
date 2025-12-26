@@ -13,7 +13,7 @@ jobs:
         os: [macos, windows, linux]
         node: [20]  # 对应 Electron 39 Node 版本
     runs-on: ${{ matrix.os }}-latest
-
+    if: false
     steps:
       # 1. 检出代码
       - uses: actions/checkout@v3
@@ -31,19 +31,26 @@ jobs:
         with:
           version: 8
 
-      # 4. 安装依赖（兼容 lockfile 存在与否）
+      # 4. 检查 pnpm 是否可用
+      - name: Check pnpm version
+        run: pnpm --version
+
+      # 5. 安装依赖（兼容 lockfile 存在与否）
       - name: Install dependencies
         run: |
-          pnpm install ${GITHUB_ENV:--no-frozen-lockfile}
-          || pnpm install --no-frozen-lockfile
+          if [ -f pnpm-lock.yaml ]; then
+            pnpm install --frozen-lockfile
+          else
+            pnpm install --no-frozen-lockfile
+          fi
         shell: bash
 
-      # 5. electron-rebuild
+      # 6. electron-rebuild
       - name: Rebuild native modules
         run: npx electron-rebuild --version 39.2.7 --arch x64
         shell: bash
 
-      # 6. 创建目标目录并拷贝 sqlite3.node
+      # 7. 创建目标目录并拷贝 sqlite3.node
       - name: Copy compiled .node
         run: |
           DEST_DIR=resources/native/${{ matrix.os }}-x64
@@ -51,7 +58,7 @@ jobs:
           cp node_modules/libsql/sqlite3/build/Release/sqlite3.node $DEST_DIR/ || echo "Error: sqlite3.node not found"
         shell: bash
 
-      # 7. 上传 artifact（v4）
+      # 8. 上传 artifact（v4）
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
