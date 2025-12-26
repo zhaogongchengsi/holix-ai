@@ -13,3 +13,4 @@ if (!existsSync(userDataDir)) {
 
 export const APP_DATA_PATH = userDataDir
 export const databaseUrl = `file:///${normalize(join(userDataDir, './sqlite.db'))}`
+export const SCHEME = 'holix'

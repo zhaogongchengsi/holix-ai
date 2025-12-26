@@ -1,0 +1,83 @@
+import { randomUUID } from "node:crypto";
+import type { RouteHandler } from "@holix/router";
+
+const connectionLoop = new Map<string, ConnectionSender>();
+
+export function createChannel() {
+	const handle: RouteHandler = async (ctx, next) => {
+		const connectionId = randomUUID();
+		const stream = new ReadableStream({
+			start(controller) {
+				const sender = new ConnectionSender(connectionId, controller);
+				sender.sendMessage({
+					type: "connected",
+					message: "已连接到 SSE 流",
+					connectionId,
+				})
+				connectionLoop.set(connectionId, sender);
+				const heartbeat = setInterval(() => {
+					try {
+						sender.heartbeat();
+					} catch (err) {
+						clearInterval(heartbeat);
+						connectionLoop.delete(connectionId);
+					}
+				}, 15000);
+				return () => {
+					clearInterval(heartbeat);
+					connectionLoop.delete(connectionId);
+				};
+			},
+			cancel() {
+				connectionLoop.delete(connectionId);
+			}
+		});
+
+		ctx
+			.status(200)
+			.headers({
+				"Content-Type": "text/event-stream",
+				"Cache-Control": "no-cache",
+				Connection: "keep-alive",
+			})
+			// @ts-expect-error
+			.stream(stream);
+
+		await next();
+	};
+
+	return handle;
+}
+
+class ConnectionSender {
+	id: string;
+	connect: ReadableStreamDefaultController
+	constructor(
+		id: string, connect: ReadableStreamDefaultController
+	) {
+		this.id = id;
+		this.connect = connect;
+	}
+
+	sendMessage(data: any) {
+		const message = `data: ${JSON.stringify(data)}\n\n`;
+		this.enqueue(message);
+	}
+
+	enqueue(data: string) {
+		this.connect.enqueue(new TextEncoder().encode(data));
+	}
+
+	heartbeat() {
+		this.enqueue(`: heartbeat\n\n`);
+	}
+}
+
+setInterval(() => {
+	connectionLoop.forEach((conn) => {
+		conn.sendMessage({
+			type: "heartbeat",
+			message: "heartbeat",
+		})
+	})
+}, 3000)

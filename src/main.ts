@@ -1,6 +1,8 @@
 import { createRouter } from "@holix/router";
 import { app, protocol } from "electron";
+import { SCHEME } from "./node/constant";
 import { migrateDb } from "./node/database/connect";
+import { createChannel } from "./node/platform/channel";
 import { configRegisterRouter, configStore } from "./node/platform/config";
 import { logger } from "./node/platform/logger";
 import { AppWindow } from "./node/platform/window";
@@ -9,7 +11,7 @@ process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 
 protocol.registerSchemesAsPrivileged([
 	{
-		scheme: "holix",
+		scheme: SCHEME,
 		privileges: {
 			standard: true,
 			secure: true,
@@ -23,6 +25,7 @@ protocol.registerSchemesAsPrivileged([
 const router = createRouter();
 
 configRegisterRouter(router);
+router.get("/channel",createChannel());
 
 let window: AppWindow | null = null;
 const gotSingleInstanceLock = app.requestSingleInstanceLock();
