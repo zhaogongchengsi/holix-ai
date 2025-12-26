@@ -1,0 +1,50 @@
+name: Build Electron Native Modules
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+
+jobs:
+  build-native:
+    strategy:
+      matrix:
+        os: [macos, windows, linux]  # 小写直接使用
+        node: [20]  # 对应 Electron 39 Node 版本
+    runs-on: ${{ matrix.os }}-latest
+
+    steps:
+      # 1. 检出代码
+      - uses: actions/checkout@v3
+
+      # 2. 设置 Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      # 3. 安装依赖
+      - name: Install dependencies
+        run: npm ci
+        shell: bash
+
+      # 4. electron-rebuild
+      - name: Rebuild native modules
+        run: npx electron-rebuild --version 39.2.7 --arch x64
+        shell: bash
+
+      # 5. 创建目标目录并拷贝 sqlite3.node
+      - name: Copy compiled .node
+        run: |
+          DEST_DIR=resources/native/${{ matrix.os }}-x64
+          mkdir -p $DEST_DIR
+          cp node_modules/libsql/sqlite3/build/Release/sqlite3.node $DEST_DIR/
+        shell: bash
+
+      # 6. 上传 artifact
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sqlite3-node-${{ matrix.os }}
+          path: resources/native/${{ matrix.os }}-x64/sqlite3.node
