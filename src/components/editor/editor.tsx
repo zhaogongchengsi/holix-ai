@@ -25,6 +25,7 @@ export function Editor(props: EditorProps) {
 		[props.namespace, props.theme, props.onError],
 	);
 
+	// TODO 处理组合输入事件 （中文输入法）
 	const onChange = useMemo(() => {
 		if (!props.onChange && !props.onTextChange) {
 			return null;
