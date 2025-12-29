@@ -44,7 +44,14 @@ export type PendingMessage = {
 	updatedAt?: number;
 };
 
-type DraftContent = DraftSegment[];
+export type DraftContent = DraftSegment[];
+
+export interface Workspace {
+	type: "directory";
+	value: string;
+}
+
+type Workspaces = Workspace[]
 
 export const chats = sqliteTable(
 	"chat",
@@ -95,6 +102,9 @@ export const chats = sqliteTable(
 		pendingMessages: t.text("pending_messages").$type<PendingMessage[]>(),
 		// 会话预设 / 系统提示
 		prompts: t.text("prompts").$type<string[]>().notNull().default([]),
+
+		/** 工作区 */
+		workspace: t.text("workspace").$type<Workspaces>(),
 	},
 	(table) => ({
 		chatUidIdx: index("idx_chat_uid").on(table.uid),
