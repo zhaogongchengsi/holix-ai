@@ -7,19 +7,17 @@ class HolixSSEClient {
 	private listeners = new Map<string, Set<SSEEventHandler>>()
 	private openHandlers = new Set<SSEVoidHandler>()
 	private errorHandlers = new Set<SSEVoidHandler>()
-	constructor() {}
-
 	/** 确保连接只建立一次 */
 	private ensureConnected() {
 		if (this.source) return
 		this.source = new EventSource(this.url)
 
 		this.source.addEventListener('open', (e) => {
-			this.openHandlers.forEach((h) => h(e))
+			this.openHandlers.forEach((h) => { h(e); })
 		})
 
 		this.source.addEventListener('error', (e) => {
-			this.errorHandlers.forEach((h) => h(e))
+			this.errorHandlers.forEach((h) => { h(e) })
 		})
 
 		// 默认 message 事件
@@ -33,7 +31,7 @@ class HolixSSEClient {
 		const handlers = this.listeners.get(type)
 		if (!handlers || handlers.size === 0) return
 
-		let payload: any = event.data
+		let payload = event.data
 		try {
 			payload = JSON.parse(event.data)
 		} catch {
@@ -53,12 +51,12 @@ class HolixSSEClient {
 			this.listeners.set(event, new Set())
 
 			// 懒注册到 EventSource
-			this.source!.addEventListener(event, (e) => {
+			this.source?.addEventListener(event, (e) => {
 				this.dispatch(event, e as MessageEvent)
 			})
 		}
 
-		this.listeners.get(event)!.add(handler)
+		this.listeners.get(event)?.add(handler)
 
 		return () => {
 			this.listeners.get(event)?.delete(handler)
