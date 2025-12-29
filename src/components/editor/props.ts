@@ -1,5 +1,4 @@
 import type { EditorState, EditorThemeClasses, LexicalEditor } from "lexical";
-import type { JSX } from "react";
 
 export interface EditorProps {
 	/** 初始内容 */
