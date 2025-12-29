@@ -19,4 +19,6 @@ export interface EditorProps {
 	ariaPlaceholder?: string
 
 	onChange?: (editorState: EditorState, editor: LexicalEditor, tags: Set<string>) => void
+
+	onTextChange?: (text: string, editor: LexicalEditor) => void
 }

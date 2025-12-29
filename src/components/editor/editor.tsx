@@ -5,13 +5,15 @@ import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
+import type { EditorState, LexicalEditor } from "lexical";
+import { $getRoot } from "lexical";
 import { useMemo } from "react";
 import type { EditorProps } from "./props";
 
 export function Editor(props: EditorProps) {
 	const initialConfig = useMemo(
 		() => ({
-			namespace: props.namespace || "MyEditor",
+			namespace: props.namespace || "holix-editor",
 			theme: Object.assign(
 				{
 					root: "editor-root w-full border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
@@ -22,6 +24,28 @@ export function Editor(props: EditorProps) {
 		}),
 		[props.namespace, props.theme, props.onError],
 	);
+
+	const onChange = useMemo(() => {
+		if (!props.onChange && !props.onTextChange) {
+			return null;
+		}
+		return (
+			editorState: EditorState,
+			editor: LexicalEditor,
+			tags: Set<string>,
+		) => {
+			if (props.onChange) {
+				props.onChange(editorState, editor, tags);
+			}
+
+			if (props.onTextChange) {
+				const text = editorState.read(() => {
+					return $getRoot().getTextContent();
+				});
+				props.onTextChange(text?.trim(), editor);
+			}
+		};
+	}, [props.onChange, props.onTextChange]);
 
 	return (
 		<div className="relative w-full">
@@ -39,9 +63,9 @@ export function Editor(props: EditorProps) {
 					}
 					ErrorBoundary={LexicalErrorBoundary}
 				/>
-				<HistoryPlugin />
+				<HistoryPlugin delay={300} />
 				<AutoFocusPlugin />
-				{props.onChange && <OnChangePlugin onChange={props.onChange} />}
+				{onChange && <OnChangePlugin onChange={onChange} />}
 			</LexicalComposer>
 		</div>
 	);
