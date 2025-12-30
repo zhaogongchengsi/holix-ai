@@ -6,6 +6,7 @@ import { createChannel } from "./node/platform/channel";
 import { configRegisterRouter, configStore } from "./node/platform/config";
 import { logger } from "./node/platform/logger";
 import { AppWindow } from "./node/platform/window";
+import { orchestrate } from "./node/orchestrator/orchestrator";
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 
@@ -23,8 +24,8 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 const router = createRouter();
-
 configRegisterRouter(router);
+orchestrate(router);
 router.get("/channel",createChannel());
 
 let window: AppWindow | null = null;

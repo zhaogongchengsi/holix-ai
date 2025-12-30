@@ -49,11 +49,6 @@ class HolixSSEClient {
 
 		if (!this.listeners.has(event)) {
 			this.listeners.set(event, new Set())
-
-			// 懒注册到 EventSource
-			this.source?.addEventListener(event, (e) => {
-				this.dispatch(event, e as MessageEvent)
-			})
 		}
 
 		this.listeners.get(event)?.add(handler)

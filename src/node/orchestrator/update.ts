@@ -2,6 +2,7 @@ import { AsyncBatcher } from "@tanstack/pacer";
 import type { EventEnvelope } from "@/types/updates/base";
 import { sendChannelMessage } from "../platform/channel";
 import { logger } from "../platform/logger";
+import { nanoid } from "nanoid";
 
 const batcher = new AsyncBatcher<EventEnvelope>(
 	async (items) => {
@@ -24,7 +25,7 @@ const batcher = new AsyncBatcher<EventEnvelope>(
 
 export function update(name: string, preload: Record<string, unknown>) {
 	batcher.addItem({
-		id: crypto.randomUUID(),
+		id: nanoid(),
 		timestamp: Date.now(),
 		type: "update",
 		name,
