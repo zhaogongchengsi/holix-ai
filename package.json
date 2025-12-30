@@ -40,6 +40,7 @@
     "lowdb": "^7.0.1",
     "lucide-react": "^0.562.0",
     "lucide-vue-next": "^0.562.0",
+    "nanoid": "^5.1.6",
     "pathe": "^2.0.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
