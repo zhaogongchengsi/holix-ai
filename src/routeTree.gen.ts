@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SettingGeneralRouteImport } from './routes/setting/general'
 import { Route as ChatIdRouteImport } from './routes/chat/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingGeneralRoute = SettingGeneralRouteImport.update({
+  id: '/setting/general',
+  path: '/setting/general',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChatIdRoute = ChatIdRouteImport.update({
@@ -26,27 +32,31 @@ const ChatIdRoute = ChatIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chat/$id': typeof ChatIdRoute
+  '/setting/general': typeof SettingGeneralRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chat/$id': typeof ChatIdRoute
+  '/setting/general': typeof SettingGeneralRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chat/$id': typeof ChatIdRoute
+  '/setting/general': typeof SettingGeneralRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/chat/$id'
+  fullPaths: '/' | '/chat/$id' | '/setting/general'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/chat/$id'
-  id: '__root__' | '/' | '/chat/$id'
+  to: '/' | '/chat/$id' | '/setting/general'
+  id: '__root__' | '/' | '/chat/$id' | '/setting/general'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatIdRoute: typeof ChatIdRoute
+  SettingGeneralRoute: typeof SettingGeneralRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/setting/general': {
+      id: '/setting/general'
+      path: '/setting/general'
+      fullPath: '/setting/general'
+      preLoaderRoute: typeof SettingGeneralRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat/$id': {
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatIdRoute: ChatIdRoute,
+  SettingGeneralRoute: SettingGeneralRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
