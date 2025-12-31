@@ -8,6 +8,7 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import type { EditorState, LexicalEditor } from "lexical";
 import { $getRoot } from "lexical";
 import { useMemo } from "react";
+import { cn } from "@/lib/utils";
 import type { EditorProps } from "./props";
 
 export function Editor(props: EditorProps) {
@@ -16,13 +17,16 @@ export function Editor(props: EditorProps) {
 			namespace: props.namespace || "holix-editor",
 			theme: Object.assign(
 				{
-					root: "editor-root w-full border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+					root: cn(
+						"editor-root w-full border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+						props.rootClassName,
+					),
 				},
 				props.theme || {},
 			),
 			onError: props.onError,
 		}),
-		[props.namespace, props.theme, props.onError],
+		[props.namespace, props.theme, props.onError, props.rootClassName],
 	);
 
 	// TODO 处理组合输入事件 （中文输入法）
@@ -49,7 +53,7 @@ export function Editor(props: EditorProps) {
 	}, [props.onChange, props.onTextChange]);
 
 	return (
-		<div className="relative w-full">
+		<div className={cn(props.wrapperClassName, "relative w-full")}>
 			<LexicalComposer initialConfig={initialConfig}>
 				<RichTextPlugin
 					contentEditable={

@@ -4,6 +4,9 @@ export interface EditorProps {
 	/** 初始内容 */
 	initialContent?: string;
 
+	rootClassName?: string;
+	wrapperClassName?: string;
+
 	/** 只读模式 */
 	readOnly?: boolean;
 

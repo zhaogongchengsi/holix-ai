@@ -37,16 +37,20 @@ function Index() {
 
 	return (
 		<div className="w-full flex justify-center items-center">
-			<div className="w-full max-w-2xl p-4">
+			<div className="w-full max-w-2xl p-4 flex flex-col gap-4">
+				<h2 className="text-center font-bold text-xl">Chat with Holix AI</h2>
 				<Editor
 					placeholder="请输入问题"
 					ariaPlaceholder="请输入问题"
+					rootClassName="min-h-[100px]"
 					onError={(err) => {
 						console.error(`editor:`, err ? err.message : "unknown error");
 					}}
 					onTextChange={onTextChange}
 				/>
-				<Button onClick={onSend}>发送</Button>
+				<Button className="ml-auto" onClick={onSend}>
+					发送
+				</Button>
 			</div>
 		</div>
 	);
