@@ -2,19 +2,22 @@ import { debounce } from "@tanstack/pacer/debouncer";
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { Editor } from "@/components/editor/editor";
-import { command } from "@/lib/command";
 import { Button } from "@/components/ui/button";
+import { command } from "@/lib/command";
 import { holixSSE } from "@/lib/sse";
 
 function Index() {
 	const [value, setValue] = useState("");
 
 	const onTextChange = useCallback(
-		debounce((text: string) => {
-			setValue(text);
-		}, {
-			wait: 300,
-		}),
+		debounce(
+			(text: string) => {
+				setValue(text);
+			},
+			{
+				wait: 300,
+			},
+		),
 		[],
 	);
 
@@ -22,15 +25,15 @@ function Index() {
 		if (value.trim().length === 0) {
 			return;
 		}
-		command("chat.start", { context: value })
+		command("chat.start", { context: value });
 	}, [value]);
 
 	useEffect(() => {
 		console.log("Setting up SSE listener");
 		return holixSSE.on("message", (data: any) => {
 			console.log("Received message via SSE:", data);
-		})
-	}, [])
+		});
+	}, []);
 
 	return (
 		<div className="w-full flex justify-center items-center">
