@@ -29,7 +29,6 @@ function Index() {
 	}, [value]);
 
 	useEffect(() => {
-		console.log("Setting up SSE listener");
 		return holixSSE.on("message", (data: any) => {
 			console.log("Received message via SSE:", data);
 		});
