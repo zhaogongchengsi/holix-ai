@@ -1,6 +1,8 @@
 import { Maximize2, Minimize2, X } from "lucide-react";
-import { useCallback } from "react";
-import { minimize, toggleMaximize } from "@/lib/system";
+import { useCallback, useEffect, useState } from "react";
+import { usePlatform } from "@/hooks/platform";
+import { onUpdate } from "@/lib/command";
+import { close, minimize, toggleMaximize } from "@/lib/system";
 import { cn } from "@/lib/utils";
 
 function Button({
@@ -14,7 +16,10 @@ function Button({
 }) {
 	return (
 		<button
-			className={cn(className, "flex items-center justify-center p-2 cursor-pointer")}
+			className={cn(
+				className,
+				"flex items-center justify-center p-2 cursor-pointer",
+			)}
 			type="button"
 			onClick={onClick}
 		>
@@ -24,6 +29,13 @@ function Button({
 }
 
 export function WindowControls() {
+	const { isMacOS } = usePlatform();
+	if (isMacOS) {
+		return null;
+	}
+
+	const [isMaximized, setIsMaximized] = useState(false);
+
 	const handleMinimize = useCallback(() => {
 		minimize();
 	}, []);
@@ -34,6 +46,16 @@ export function WindowControls() {
 
 	const handleClose = useCallback(() => {
 		close();
+	}, []);
+
+	useEffect(() => {
+		const off = onUpdate("window.maximize", (payload) => {
+			console.log("Window maximized state:", payload.maximized);
+			setIsMaximized(payload.maximized);
+		});
+		return () => {
+			off();
+		};
 	}, []);
 
 	return (
@@ -50,7 +72,7 @@ export function WindowControls() {
 				onClick={handleToggleMaximize}
 				aria-label="Maximize"
 			>
-				<Maximize2 size={14} />
+				{isMaximized ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
 			</Button>
 			<Button
 				className="hover:bg-red-600 hover:text-white rounded-sm"

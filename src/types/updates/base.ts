@@ -6,5 +6,5 @@ export type EventEnvelope<
 	timestamp: number;
 	type: "update";
 	name: N;
-	preload: T;
+	payload: T;
 };

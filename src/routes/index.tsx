@@ -28,12 +28,6 @@ function Index() {
 		command("chat.start", { context: value });
 	}, [value]);
 
-	useEffect(() => {
-		return holixSSE.on("message", (data: any) => {
-			console.log("Received message via SSE:", data);
-		});
-	}, []);
-
 	return (
 		<div className="w-full flex justify-center items-center">
 			<div className="w-full max-w-2xl p-4 flex flex-col gap-4">

@@ -1,6 +1,7 @@
 import type { HolixProtocolRouter } from "@holix/router";
 import { BrowserWindow } from "electron";
 import { configStore } from "./config";
+import { update } from "./update";
 
 const minWidth = 800;
 const minHeight = 540;
@@ -29,14 +30,28 @@ export class AppWindow extends BrowserWindow {
 			const [width, height] = this.getSize();
 			await configStore.set("window", { width, height });
 		});
+		
+		// Window state change events -> send updates to renderer via orchestrator.update
+		this.on('minimize', () => {
+			update('window.minimize', {});
+		});
+
+		this.on('maximize', () => {
+			update('window.maximize', { maximized: true });
+		});
+
+		this.on('unmaximize', () => {
+			update('window.maximize', { maximized: false });
+		});
+
+		this.on('close', () => {
+			update('window.close', {});
+		});
 	}
 
 	use(router: HolixProtocolRouter) {
 		router.post("/window/:action", async (ctx, next) => {
 			const action = ctx.params.action;
-
-			console.log("Window action requested:", action);
-
 			if (action === "minimize") {
 				this.minimize();
 			}
