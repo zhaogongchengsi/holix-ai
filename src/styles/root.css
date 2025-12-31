@@ -4,7 +4,7 @@
 }
 
 :root {
-	--app-header-height: 36px;
+	--app-header-height: 56px;
 	--app-sidebar-width: 260px;
 	--app-chat-width: calc(100vw - var(--app-sidebar-width));
 }

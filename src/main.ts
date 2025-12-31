@@ -2,11 +2,11 @@ import { createRouter } from "@holix/router";
 import { app, protocol } from "electron";
 import { SCHEME } from "./node/constant";
 import { migrateDb } from "./node/database/connect";
+import { orchestrate } from "./node/orchestrator/orchestrator";
 import { createChannel } from "./node/platform/channel";
 import { configRegisterRouter, configStore } from "./node/platform/config";
 import { logger } from "./node/platform/logger";
 import { AppWindow } from "./node/platform/window";
-import { orchestrate } from "./node/orchestrator/orchestrator";
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 
@@ -26,7 +26,7 @@ protocol.registerSchemesAsPrivileged([
 const router = createRouter();
 configRegisterRouter(router);
 orchestrate(router);
-router.get("/channel",createChannel());
+router.get("/channel", createChannel());
 
 let window: AppWindow | null = null;
 const gotSingleInstanceLock = app.requestSingleInstanceLock();
@@ -50,6 +50,8 @@ async function bootstrap() {
 	await configStore.init();
 	window = new AppWindow();
 	router.register(window.webContents.session.protocol);
+	window.use(router);
+
 	await window.showWhenReady();
 }
 
