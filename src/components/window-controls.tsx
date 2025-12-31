@@ -1,4 +1,4 @@
-import { Maximize2, Minimize2, X } from "lucide-react";
+import { Maximize2, Minimize2, Minus, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { usePlatform } from "@/hooks/platform";
 import { onUpdate } from "@/lib/command";
@@ -65,7 +65,7 @@ export function WindowControls() {
 				onClick={handleMinimize}
 				aria-label="Minimize"
 			>
-				<Minimize2 size={14} />
+				<Minus size={14} />
 			</Button>
 			<Button
 				className="hover:bg-gray-200/60 rounded-sm"
