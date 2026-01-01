@@ -9,6 +9,6 @@ export default function useCommand<N extends CommandNames>(name: N) {
 		) => {
 			command(name, preload);
 		},
-		[],
+		[name],
 	);
 }
