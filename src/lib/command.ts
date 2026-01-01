@@ -6,7 +6,12 @@ import type { Update, UpdateNames } from "@/types/updates";
 import { kyInstance } from "./ky";
 import { holixSSE } from "./sse";
 
-const onUpdateMap = new Map<string, Set<Function>>();
+export type HandlerFor<N extends UpdateNames> = (
+	payload: Extract<Update, { name: N }>["payload"],
+	command: Extract<Update, { name: N }>,
+) => void;
+
+const onUpdateMap = new Map<string, Set<HandlerFor<any>>>();
 
 const batcher = new AsyncBatcher<Command>(
 	async (items) => {
@@ -59,7 +64,7 @@ holixSSE.on("message", (data: unknown) => {
 					for (const h of handlers) {
 						try {
 							// first arg: payload, second arg: full command
-							(h as any)(command.payload, command as any);
+							h(command.payload, command as Update);
 						} catch (err) {
 							console.error("onUpdate handler error:", err);
 						}
@@ -72,14 +77,13 @@ holixSSE.on("message", (data: unknown) => {
 
 export function onUpdate<N extends UpdateNames>(
 	name: N,
-	fn: (
-		payload: Extract<Update, { name: N }>["payload"],
-		command: Extract<Update, { name: N }>,
-	) => void,
+	fn: HandlerFor<N>,
 ) {
 	const key = name as string;
-	const set = onUpdateMap.get(key) ?? new Set<Function>();
-	set.add(fn as unknown as Function);
+	const set = onUpdateMap.get(key) ?? new Set<HandlerFor<N>>();
+	set.add(fn as unknown as HandlerFor<N>);
 	onUpdateMap.set(key, set);
-	return () => set.delete(fn as unknown as Function);
+	return () => {
+		set.delete(fn as unknown as HandlerFor<N>)
+	};
 }
