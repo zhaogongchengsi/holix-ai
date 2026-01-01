@@ -11,7 +11,57 @@ export class ProviderStore extends Store<ProviderData> {
 		super({
 			name: "providers",
 			defaultData: {
-				providers: [],
+				providers: [
+					{
+						name: "OpenAI",
+						baseUrl: "https://api.openai.com/v1",
+						apiKey: "",
+						models: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-3.5-turbo"],
+						enabled: false,
+					},
+					{
+						name: "Anthropic",
+						baseUrl: "https://api.anthropic.com/v1",
+						apiKey: "",
+						models: ["claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022", "claude-3-opus-20240229"],
+						enabled: false,
+					},
+					{
+						name: "Google Gemini",
+						baseUrl: "https://generativelanguage.googleapis.com/v1beta",
+						apiKey: "",
+						models: ["gemini-2.0-flash-exp", "gemini-1.5-pro", "gemini-1.5-flash"],
+						enabled: false,
+					},
+					{
+						name: "DeepSeek",
+						baseUrl: "https://api.deepseek.com/v1",
+						apiKey: "",
+						models: ["deepseek-chat", "deepseek-reasoner"],
+						enabled: false,
+					},
+					{
+						name: "Moonshot",
+						baseUrl: "https://api.moonshot.cn/v1",
+						apiKey: "",
+						models: ["moonshot-v1-8k", "moonshot-v1-32k", "moonshot-v1-128k"],
+						enabled: false,
+					},
+					{
+						name: "智谱AI",
+						baseUrl: "https://open.bigmodel.cn/api/paas/v4",
+						apiKey: "",
+						models: ["glm-4-plus", "glm-4-air", "glm-4-flash"],
+						enabled: false,
+					},
+					{
+						name: "阿里云百炼",
+						baseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+						apiKey: "",
+						models: ["qwen-max", "qwen-plus", "qwen-turbo"],
+						enabled: false,
+					},
+				],
 			},
 			basePath: "providers",
 		});

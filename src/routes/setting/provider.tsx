@@ -1,19 +1,18 @@
-import { getConfig } from '@/lib/config';
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
+import { getProviders } from "@/lib/provider";
 
 export const Route = createFileRoute("/setting/provider")({
-  component: RouteComponent,
-  loader: async () => {
-    const config = await getConfig();
-    return config;
-  },
+	component: RouteComponent,
+	loader: async () => {
+		const providers = await getProviders();
+		return providers;
+	},
 });
 
 function RouteComponent() {
+	const providers = Route.useLoaderData();
 
-  const config = Route.useLoaderData();
+	console.log("Providers data in /setting/provider:", providers);
 
-  console.log('Config data in /setting/provider:', config);
-
-  return <div>Hello "/setting/provider"!</div>
+	return <div>Hello "/setting/provider"!</div>;
 }
