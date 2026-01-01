@@ -6,10 +6,6 @@ export async function getConfig() {
 	return await kyInstance.get('config').json<ConfigData>()
 }
 
-export async function updateConfig() {
-	return await kyInstance.post('config', { json: {
-		
-	} }).json<{
-		
-	}>()
+export async function updateConfig<K extends keyof ConfigData>(key: K, value: ConfigData[K]) {
+	return await kyInstance.post('config', { json: { key, value } }).json<ConfigData>()
 }
