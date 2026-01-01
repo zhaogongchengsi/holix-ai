@@ -1,5 +1,7 @@
+import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "@/components/ui/item";
 import { Separator } from "@/components/ui/separator";
 import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
+import { ChevronRightIcon } from "lucide-react";
 
 export const Route = createFileRoute("/setting")({
   component: AppLayoutComponent,
@@ -24,9 +26,13 @@ function AppLayoutComponent() {
         <ul className="w-48">
           {settingList.map((setting) => (
             <li key={setting.path}>
-              <Link to={setting.path} className="text-blue-600 hover:underline">
-                {setting.name}
-              </Link>
+              <Item asChild>
+                <Link to={setting.path}>
+                  <ItemContent>
+                    <ItemTitle>{setting.name}</ItemTitle>
+                  </ItemContent>
+                </Link>
+              </Item>
             </li>
           ))}
         </ul>
