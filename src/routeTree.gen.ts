@@ -9,19 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingRouteImport } from './routes/setting'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingGeneralRouteImport } from './routes/setting/general'
 import { Route as ChatIdRouteImport } from './routes/chat/$id'
 
+const SettingRoute = SettingRouteImport.update({
+  id: '/setting',
+  path: '/setting',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingGeneralRoute = SettingGeneralRouteImport.update({
-  id: '/setting/general',
-  path: '/setting/general',
-  getParentRoute: () => rootRouteImport,
+  id: '/general',
+  path: '/general',
+  getParentRoute: () => SettingRoute,
 } as any)
 const ChatIdRoute = ChatIdRouteImport.update({
   id: '/chat/$id',
@@ -31,36 +37,46 @@ const ChatIdRoute = ChatIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/setting': typeof SettingRouteWithChildren
   '/chat/$id': typeof ChatIdRoute
   '/setting/general': typeof SettingGeneralRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/setting': typeof SettingRouteWithChildren
   '/chat/$id': typeof ChatIdRoute
   '/setting/general': typeof SettingGeneralRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/setting': typeof SettingRouteWithChildren
   '/chat/$id': typeof ChatIdRoute
   '/setting/general': typeof SettingGeneralRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/chat/$id' | '/setting/general'
+  fullPaths: '/' | '/setting' | '/chat/$id' | '/setting/general'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/chat/$id' | '/setting/general'
-  id: '__root__' | '/' | '/chat/$id' | '/setting/general'
+  to: '/' | '/setting' | '/chat/$id' | '/setting/general'
+  id: '__root__' | '/' | '/setting' | '/chat/$id' | '/setting/general'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SettingRoute: typeof SettingRouteWithChildren
   ChatIdRoute: typeof ChatIdRoute
-  SettingGeneralRoute: typeof SettingGeneralRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/setting': {
+      id: '/setting'
+      path: '/setting'
+      fullPath: '/setting'
+      preLoaderRoute: typeof SettingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -70,10 +86,10 @@ declare module '@tanstack/react-router' {
     }
     '/setting/general': {
       id: '/setting/general'
-      path: '/setting/general'
+      path: '/general'
       fullPath: '/setting/general'
       preLoaderRoute: typeof SettingGeneralRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof SettingRoute
     }
     '/chat/$id': {
       id: '/chat/$id'
@@ -85,10 +101,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface SettingRouteChildren {
+  SettingGeneralRoute: typeof SettingGeneralRoute
+}
+
+const SettingRouteChildren: SettingRouteChildren = {
+  SettingGeneralRoute: SettingGeneralRoute,
+}
+
+const SettingRouteWithChildren =
+  SettingRoute._addFileChildren(SettingRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SettingRoute: SettingRouteWithChildren,
   ChatIdRoute: ChatIdRoute,
-  SettingGeneralRoute: SettingGeneralRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
