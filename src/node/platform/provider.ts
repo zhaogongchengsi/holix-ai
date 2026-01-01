@@ -120,8 +120,9 @@ export class ProviderStore extends Store<ProviderData> {
 		});
 
 		router.get(`${basePath}/:name`, async (ctx) => {
-			const name = (ctx.params && (ctx.params as any).name) ?? null;
-			if (!name) return ctx.status(400).json({ error: "missing name" });
+			const rawName = (ctx.params && (ctx.params as any).name) ?? null;
+			if (!rawName) return ctx.status(400).json({ error: "missing name" });
+			const name = decodeURIComponent(rawName);
 			const item = this.findByName(name);
 			if (!item) return ctx.status(404).json({ error: "not found" });
 			ctx.json(item);
@@ -138,8 +139,9 @@ export class ProviderStore extends Store<ProviderData> {
 		});
 
 		router.put(`${basePath}/:name`, async (ctx) => {
-			const name = (ctx.params && (ctx.params as any).name) ?? null;
-			if (!name) return ctx.status(400).json({ error: "missing name" });
+			const rawName = (ctx.params && (ctx.params as any).name) ?? null;
+			if (!rawName) return ctx.status(400).json({ error: "missing name" });
+			const name = decodeURIComponent(rawName);
 			const body = await ctx.req.json();
 			const updated = await this.update(name, body);
 			if (!updated) return ctx.status(404).json({ error: "not found" });
@@ -147,15 +149,17 @@ export class ProviderStore extends Store<ProviderData> {
 		});
 
 		router.delete(`${basePath}/:name`, async (ctx) => {
-			const name = (ctx.params && (ctx.params as any).name) ?? null;
-			if (!name) return ctx.status(400).json({ error: "missing name" });
+			const rawName = (ctx.params && (ctx.params as any).name) ?? null;
+			if (!rawName) return ctx.status(400).json({ error: "missing name" });
+			const name = decodeURIComponent(rawName);
 			await this.remove(name);
 			ctx.json({ success: true });
 		});
 
 		router.patch(`${basePath}/:name/toggle`, async (ctx) => {
-			const name = (ctx.params && (ctx.params as any).name) ?? null;
-			if (!name) return ctx.status(400).json({ error: "missing name" });
+			const rawName = (ctx.params && (ctx.params as any).name) ?? null;
+			if (!rawName) return ctx.status(400).json({ error: "missing name" });
+			const name = decodeURIComponent(rawName);
 			const body = await ctx.req.json();
 			const updated = await this.toggle(name, body.enabled ?? true);
 			if (!updated) return ctx.status(404).json({ error: "not found" });
