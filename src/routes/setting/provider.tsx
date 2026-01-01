@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getProviders, toggleProvider, updateProvider } from "@/lib/provider";
+import { getProviders, updateProvider } from "@/lib/provider";
 import type { AIProvider } from "@/types/provider";
 
 export const Route = createFileRoute("/setting/provider")({
@@ -36,7 +36,7 @@ function RouteComponent() {
 
 	const handleToggle = async (name: string, enabled: boolean) => {
 		try {
-			const updated = await toggleProvider(name, enabled);
+			const updated = await updateProvider(name, { enabled });
 			setProviders((prev) => prev.map((p) => (p.name === name ? updated : p)));
 		} catch (error) {
 			console.error("Failed to toggle provider:", error);
