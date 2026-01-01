@@ -6,6 +6,7 @@ import { orchestrate } from "./node/orchestrator/orchestrator";
 import { createChannel } from "./node/platform/channel";
 import { configStore } from "./node/platform/config";
 import { logger } from "./node/platform/logger";
+import { providerStore } from "./node/platform/provider";
 import { AppWindow } from "./node/platform/window";
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
@@ -25,6 +26,7 @@ protocol.registerSchemesAsPrivileged([
 
 const router = createRouter();
 configStore.use(router);
+providerStore.use(router);
 orchestrate(router);
 router.get("/channel", createChannel());
 
@@ -48,6 +50,7 @@ app.on("second-instance", () => {
 async function bootstrap() {
 	await app.whenReady();
 	await configStore.init();
+	await providerStore.init();
 	window = new AppWindow();
 	router.register(window.webContents.session.protocol);
 	window.use(router);
