@@ -4,6 +4,7 @@ import { SCHEME } from "./node/constant";
 import { migrateDb } from "./node/database/connect";
 import { orchestrate } from "./node/orchestrator/orchestrator";
 import { createChannel } from "./node/platform/channel";
+import { onCommandForClient } from "./node/platform/commands";
 import { configStore } from "./node/platform/config";
 import { logger } from "./node/platform/logger";
 import { providerStore } from "./node/platform/provider";
@@ -27,7 +28,7 @@ protocol.registerSchemesAsPrivileged([
 const router = createRouter();
 configStore.use(router);
 providerStore.use(router);
-orchestrate(router);
+onCommandForClient(router);
 router.get("/channel", createChannel());
 
 let window: AppWindow | null = null;
@@ -49,6 +50,7 @@ app.on("second-instance", () => {
 
 async function bootstrap() {
 	await app.whenReady();
+	orchestrate();
 	await configStore.init();
 	await providerStore.init();
 	window = new AppWindow();
