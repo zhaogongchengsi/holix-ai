@@ -1,7 +1,6 @@
-import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
+import { Item, ItemContent, ItemTitle } from "@/components/ui/item";
 import { Separator } from "@/components/ui/separator";
 import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
-import { ShieldAlertIcon } from "lucide-react";
 
 export const Route = createFileRoute("/setting")({
   component: AppLayoutComponent,

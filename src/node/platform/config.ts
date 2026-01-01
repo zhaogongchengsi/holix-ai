@@ -1,13 +1,12 @@
 import type { HolixProtocolRouter } from "@holix/router";
 import { Store } from "./store";
 
-interface ConfigData {
+export interface ConfigData {
 	window: {
 		width: number;
 		height: number;
 	};
 	theme: string;
-	currentChatId?: number;
 }
 
 export class Config extends Store<ConfigData> {
