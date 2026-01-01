@@ -8,6 +8,9 @@ export function ChatPanel(props: Chat) {
       to="/chat/$id"
       params={{ id: props.uid }}
       className="block rounded-md cursor-pointer p-2 hover:bg-zinc-100 dark:hover:bg-zinc-600 select-none"
+      activeProps={{
+        className: "bg-zinc-200! dark:bg-zinc-700!",
+      }}
       aria-label={`Open chat: ${props.title}`}
     >
       <div>
