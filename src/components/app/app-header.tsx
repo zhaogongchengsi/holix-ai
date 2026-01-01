@@ -5,7 +5,7 @@ import AppSetting from "./app-setting";
 
 export default function AppHeader() {
 	return (
-		<header className="h-(--app-header-height) flex justify-between items-center">
+		<header className="h-(--app-header-height) flex justify-between items-center app-drag-region">
 			<h1 className="h-full font-bold flex items-center pl-4">Holix AI</h1>
 			<div className="pr-4 flex items-center gap-4">
 				<ModeToggle />

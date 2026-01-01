@@ -125,3 +125,29 @@
 body, html {
   font-size: 14px;
 }
+
+/*
+ * 应用程序拖拽区域
+ * - 在 Electron 中：父元素设置 `-webkit-app-region: drag` 会使该区域可拖动
+ * - 但交互子元素（链接、按钮、表单控件等）必须显式设置 `-webkit-app-region: no-drag`
+ *   否则它们将无法接收点击/焦点等事件。
+ *
+ * 使用示例:
+ * <header class="app-drag-region"> ... <button>不会被挡住</button> ...</header>
+ */
+.app-drag-region {
+  -webkit-app-region: drag;
+  /* 防止选中文字触发拖拽时的异常选择行为 */
+  user-select: none;
+}
+
+/* 下面这些后代元素仍然应当可交互，禁用拖拽以允许点击/聚焦 */
+.app-drag-region :where(a, button, summary, input, textarea, select, label, [role="button"], [tabindex]) {
+  -webkit-app-region: no-drag;
+  user-select: text;
+}
+
+/* 提供一个便捷的属性选择器，允许在特殊元素上恢复拖拽阻止（例如需要拖拽的自定义元素） */
+.app-drag-region [data-drag] {
+  -webkit-app-region: drag;
+}
