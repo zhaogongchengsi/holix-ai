@@ -1,6 +1,6 @@
-import { ModeToggle } from "./mode-toggle";
-import { Separator } from "./ui/separator";
-import WindowControls from "./window-controls";
+import { ModeToggle } from "../mode-toggle";
+import { Separator } from "../ui/separator";
+import WindowControls from "../window-controls";
 import AppSetting from "./app-setting";
 
 export default function AppHeader() {
