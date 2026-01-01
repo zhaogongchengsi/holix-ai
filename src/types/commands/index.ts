@@ -1,8 +1,7 @@
-import { StartChatCommand } from "./chat";
+import { ChatCommands } from "./chat";
 import { SendMessage } from "./message";
 
-
-export type Commands = StartChatCommand | SendMessage;
+export type Commands = ChatCommands | SendMessage;
 
 export type CommandBatch = Commands[];
 

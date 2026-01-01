@@ -1,6 +1,27 @@
 import type { Command } from "./base";
 
-// 开始聊天命令 只需要一句话
+// 第一次开始聊天
 export type StartChatCommand = Command<"chat.start", {
 	context: string
+	model: string
 }>;
+
+// 新增：后续会话 / 多次消息交互
+// 发送/追加一条消息到会话（适用于多次交互的每次发言）
+export type SendChatMessageCommand = Command<"chat.message", {
+	chatId: string;
+	content: string;             // 本次消息文本
+	replyTo?: string | null;     // 可选：引用的消息 id
+}>;
+
+// 结束会话（可用于中止或标记会话完成）
+export type EndChatCommand = Command<"chat.end", {
+	chatId: string;
+	messageId: string
+}>;
+
+// 会话相关命令的联合类型（方便 dispatch/handler 使用）
+export type ChatCommands =
+	StartChatCommand |
+	SendChatMessageCommand |
+	EndChatCommand;
