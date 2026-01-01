@@ -4,4 +4,5 @@ export interface AIProvider {
 	apiKey: string;
 	models: string[];
 	enabled: boolean;
+	avatar: string;
 }

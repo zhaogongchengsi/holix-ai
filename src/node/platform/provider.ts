@@ -18,6 +18,7 @@ export class ProviderStore extends Store<ProviderData> {
 						apiKey: "",
 						models: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-3.5-turbo"],
 						enabled: false,
+						avatar: "🤖",
 					},
 					{
 						name: "Anthropic",
@@ -25,6 +26,7 @@ export class ProviderStore extends Store<ProviderData> {
 						apiKey: "",
 						models: ["claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022", "claude-3-opus-20240229"],
 						enabled: false,
+						avatar: "🎭",
 					},
 					{
 						name: "Google Gemini",
@@ -32,6 +34,7 @@ export class ProviderStore extends Store<ProviderData> {
 						apiKey: "",
 						models: ["gemini-2.0-flash-exp", "gemini-1.5-pro", "gemini-1.5-flash"],
 						enabled: false,
+						avatar: "💎",
 					},
 					{
 						name: "DeepSeek",
@@ -39,6 +42,7 @@ export class ProviderStore extends Store<ProviderData> {
 						apiKey: "",
 						models: ["deepseek-chat", "deepseek-reasoner"],
 						enabled: false,
+						avatar: "🌊",
 					},
 					{
 						name: "Moonshot",
@@ -46,6 +50,7 @@ export class ProviderStore extends Store<ProviderData> {
 						apiKey: "",
 						models: ["moonshot-v1-8k", "moonshot-v1-32k", "moonshot-v1-128k"],
 						enabled: false,
+						avatar: "🌙",
 					},
 					{
 						name: "智谱AI",
@@ -53,6 +58,7 @@ export class ProviderStore extends Store<ProviderData> {
 						apiKey: "",
 						models: ["glm-4-plus", "glm-4-air", "glm-4-flash"],
 						enabled: false,
+						avatar: "🧠",
 					},
 					{
 						name: "阿里云百炼",
@@ -60,6 +66,7 @@ export class ProviderStore extends Store<ProviderData> {
 						apiKey: "",
 						models: ["qwen-max", "qwen-plus", "qwen-turbo"],
 						enabled: false,
+						avatar: "☁️",
 					},
 				],
 			},

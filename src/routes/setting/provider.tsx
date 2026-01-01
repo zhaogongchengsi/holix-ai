@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { getProviders } from "@/lib/provider";
 
 export const Route = createFileRoute("/setting/provider")({
@@ -10,7 +11,7 @@ export const Route = createFileRoute("/setting/provider")({
 });
 
 function RouteComponent() {
-	const providers = Route.useLoaderData();
+	const [providers, setProviders] = useState(Route.useLoaderData());
 
 	console.log("Providers data in /setting/provider:", providers);
 
