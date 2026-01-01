@@ -91,9 +91,9 @@ function RouteComponent() {
         </Button>
       </div>
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4 max-w-full overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/50">
+        <TabsList className="mb-4 h-12! max-w-full overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/50">
           {providers.map((provider) => (
-            <TabsTrigger key={provider.name} value={provider.name}>
+            <TabsTrigger key={provider.name} value={provider.name} className="h-8">
               <span className="mr-1.5">{provider.avatar}</span>
               {provider.name}
             </TabsTrigger>
