@@ -1,10 +1,17 @@
 import { debounce } from "@tanstack/pacer/debouncer";
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Editor } from "@/components/editor/editor";
 import { Button } from "@/components/ui/button";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { command } from "@/lib/command";
-import { holixSSE } from "@/lib/sse";
+import ModuleSelector from "@/components/module-selectr";
 
 function Index() {
 	const [value, setValue] = useState("");
@@ -41,9 +48,13 @@ function Index() {
 					}}
 					onTextChange={onTextChange}
 				/>
-				<Button className="ml-auto" onClick={onSend}>
-					发送
-				</Button>
+
+				<div className="flex items-center gap-2">
+					<ModuleSelector />
+					<Button className="ml-auto" onClick={onSend}>
+						发送
+					</Button>
+				</div>
 			</div>
 		</div>
 	);
