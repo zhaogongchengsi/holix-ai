@@ -1,5 +1,3 @@
-// 列出常见的聊天 / 图像 / 视频模型名称常量（按供应商分组）
-// 可根据需要扩展或替换为从外部库中导入的常量
 
 // OpenAI - 聊天模型
 export const OPENAI_CHAT_MODELS = [
@@ -99,15 +97,22 @@ export const PROVIDER_MODELS = {
 	ollama: OLLAMA_MODELS,
 } as const;
 
-function getProvider(model: KnownModelName) {
-	if ([...OPENAI_CHAT_MODELS, ...OPENAI_IMAGE_MODELS, ...OPENAI_VIDEO_MODELS].includes(model as OpenAIChatModel)) {
+export type ProviderType = "openai" | "anthropic" | "gemini" | "ollama";
+
+export function inferProvider(model: string): ProviderType | null {
+	if (
+		[
+			...OPENAI_CHAT_MODELS,
+			...OPENAI_IMAGE_MODELS,
+			...OPENAI_VIDEO_MODELS,
+		].includes(model as OpenAIChatModel)
+	) {
 		return "openai";
 	}
 
 	if (ANTHROPIC_MODELS.includes(model as AnthropicModel)) {
 		return "anthropic";
 	}
-
 
 	if (GEMINI_MODELS.includes(model as GeminiModel)) {
 		return "gemini";
@@ -117,7 +122,7 @@ function getProvider(model: KnownModelName) {
 		return "ollama";
 	}
 
-	return null
+	return null;
 }
 
 export default {
@@ -128,5 +133,4 @@ export default {
 	GEMINI_MODELS,
 	OLLAMA_MODELS,
 	PROVIDER_MODELS,
-	getProvider,
 };

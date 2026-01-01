@@ -1,8 +1,8 @@
 import { createRouter } from "@holix/router";
 import { app, protocol } from "electron";
+import { initChat } from "./node/chat/init";
 import { SCHEME } from "./node/constant";
 import { migrateDb } from "./node/database/connect";
-import { orchestrate } from "./node/orchestrator/orchestrator";
 import { createChannel } from "./node/platform/channel";
 import { onCommandForClient } from "./node/platform/commands";
 import { configStore } from "./node/platform/config";
@@ -50,7 +50,7 @@ app.on("second-instance", () => {
 
 async function bootstrap() {
 	await app.whenReady();
-	orchestrate();
+	initChat();
 	await configStore.init();
 	await providerStore.init();
 	window = new AppWindow();
