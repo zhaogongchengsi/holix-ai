@@ -4,7 +4,7 @@ import { SCHEME } from "./node/constant";
 import { migrateDb } from "./node/database/connect";
 import { orchestrate } from "./node/orchestrator/orchestrator";
 import { createChannel } from "./node/platform/channel";
-import { configRegisterRouter, configStore } from "./node/platform/config";
+import { configStore } from "./node/platform/config";
 import { logger } from "./node/platform/logger";
 import { AppWindow } from "./node/platform/window";
 
@@ -24,7 +24,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 const router = createRouter();
-configRegisterRouter(router);
+configStore.use(router);
 orchestrate(router);
 router.get("/channel", createChannel());
 

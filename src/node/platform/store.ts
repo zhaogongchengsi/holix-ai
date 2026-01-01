@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
+import type { HolixProtocolRouter } from "@holix/router";
 import type { Low } from "lowdb";
 import { JSONFilePreset } from "lowdb/node";
 import { dirname, join } from "pathe";
@@ -8,6 +9,7 @@ import { APP_DATA_PATH } from "../constant";
 export interface StoreOptions<T = any> {
 	name: string;
 	defaultData: T;
+	basePath?: string;
 }
 
 const nameSet = new Set<string>();
@@ -18,11 +20,17 @@ export class Store<D> {
 	name: string;
 	defaultData: D;
 	isInitialized = false;
+
+	basePath?: string;
+
 	constructor(opt: StoreOptions<D>) {
 		this.name = opt.name;
 		if (nameSet.has(this.name)) {
 			throw new Error(`Store name ${this.name} already exists`);
 		}
+
+		this.basePath = opt.basePath;
+
 		nameSet.add(this.name);
 		this.defaultData = opt.defaultData;
 		this.path = join(APP_DATA_PATH, `${opt.name}.json`);
@@ -60,6 +68,27 @@ export class Store<D> {
 
 	getFilePath() {
 		return this.path;
+	}
+
+	use(router: HolixProtocolRouter) {
+		const _path = `/${this.basePath}` || `/${this.name}`;
+		router.get(_path, async (ctx) => {
+			ctx.json(this.getStore().data);
+		});
+		router.post(_path, async (ctx) => {
+			const reqBody = await ctx.req.json();
+			this.mutate(reqBody.key, reqBody.value);
+		});
+	}
+
+	query() {
+		return this.getStore().data;
+	}
+
+	mutate<K extends keyof D>(key: K, value: D[K]) {
+		this.set(key, value);
+		this.saveStore();
+		return this.getStore().data;
 	}
 }
 
