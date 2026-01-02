@@ -23,11 +23,8 @@ export class AppWindow extends BrowserWindow {
 
 		let url = import.meta.env.BASE_URL;
 
-		console.log("Current Chat ID:", currentChatId);
-
 		if (currentChatId) {
 			url = url.concat(`chat/${currentChatId}`);
-			console.log("Loading URL with Chat ID:", url);
 		}
 
 		import.meta.env.DEV ? this.loadURL(url) : this.loadFile(url);
