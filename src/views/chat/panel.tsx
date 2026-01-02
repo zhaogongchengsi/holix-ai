@@ -1,30 +1,35 @@
 import { Link } from "@tanstack/react-router";
 import { timeAgo } from "@/lib/time";
 import type { Chat } from "@/node/database/schema/chat";
+import { cn } from "@/lib/utils";
 
 export function ChatPanel(props: Chat) {
 	return (
 		<Link
 			to="/chat/$id"
 			params={{ id: props.uid }}
-			className="block rounded-md cursor-pointer p-2 hover:bg-zinc-100 dark:hover:bg-zinc-600 select-none"
+			className={cn(
+				"flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent/50 select-none",
+				"border-transparent"
+			)}
 			activeProps={{
-				className: "bg-zinc-200! dark:bg-zinc-700!",
+				className: "bg-accent text-accent-foreground border-border shadow-sm",
 			}}
 			aria-label={`Open chat: ${props.title}`}
 		>
-			<div>
-				<div className="flex justify-between items-center">
-					<h2 className="w-3/4 min-w-0 truncate">{props.title}</h2>
-					<span className="text-sm text-gray-500">
+			<div className="flex w-full flex-col gap-1">
+				<div className="flex items-center justify-between">
+					<span className="font-semibold truncate max-w-[70%]">
+						{props.title}
+					</span>
+					<span className="ml-auto text-[10px] text-muted-foreground/80">
 						{timeAgo(props.updatedAt)}
 					</span>
 				</div>
-				{props.lastMessagePreview && (
-					<p className="text-gray-500 line-clamp-1 wrap-break-word">
-						{props.lastMessagePreview}
-					</p>
-				)}
+
+				<span className="line-clamp-2 text-xs text-muted-foreground w-full break-words opacity-90">
+					{props.lastMessagePreview || "No messages yet"}
+				</span>
 			</div>
 		</Link>
 	);

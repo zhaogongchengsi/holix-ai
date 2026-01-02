@@ -15,7 +15,7 @@ export function MainContent() {
         style={{ height: "var(--app-chat-content-height)" }}
         data={messages}
         className="custom-scrollbar"
-        itemContent={(index, msg) => {
+        itemContent={(_, msg) => {
           return <MessageItem key={msg.uid} message={msg} />;
         }}
       />

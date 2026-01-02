@@ -7,17 +7,9 @@ export interface AppSideBarProps {
 }
 
 export default function AppSideBar(props: AppSideBarProps) {
-  const navigate = useNavigate();
-
   return (
     <aside className="w-(--app-sidebar-width) h-full border-r flex flex-col">
-      <div>{props.children}</div>
-      <div className="w-full mt-auto py-3 px-2 border-t">
-        <Button className="w-full cursor-pointer" onClick={() => navigate({ to: "/" })}>
-          <Plus />
-          New Chat
-        </Button>
-      </div>
+      <div className="h-[calc(100vh-var(--app-header-height))]">{props.children}</div>
     </aside>
   );
 }
