@@ -8,8 +8,8 @@ export interface AppSideBarProps {
 
 export default function AppSideBar(props: AppSideBarProps) {
   return (
-    <aside className="w-(--app-sidebar-width) h-full border-r flex flex-col">
-      <div className="h-[calc(100vh-var(--app-header-height))]">{props.children}</div>
+    <aside className="w-(--app-sidebar-width) border-r flex flex-col">
+      <div className="h-[calc(100vh-var(--app-header-height)-10px)]">{props.children}</div>
     </aside>
   );
 }

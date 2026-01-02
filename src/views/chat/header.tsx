@@ -6,7 +6,7 @@ export function AsideChatHeader() {
   const navigate = useNavigate();
 
   return (
-    <header className="px-4 py-3 flex items-center justify-between border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10 h-(--app-chat-header-height)">
+    <header className="px-4 py-3 flex items-center justify-between border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 sticky top-0 z-10 h-(--app-chat-header-height)">
       <h2 className="font-semibold text-sm tracking-tight">Chats</h2>
 
       <div className="flex items-center gap-1">

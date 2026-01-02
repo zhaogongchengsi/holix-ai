@@ -5,7 +5,7 @@ export function AsideChatSidebar() {
   const chats = useChat((state) => state.chats);
 
   return (
-    <nav className="w-full py-2 h-[calc(100vh-var(--app-header-height)-50px)] overflow-auto">
+    <nav className="w-full py-2 h-[calc(100vh-var(--app-header-height)-50px-10px)] overflow-auto">
       <ul className="w-full space-y-2">
         {chats.map((chat) => {
           return (
