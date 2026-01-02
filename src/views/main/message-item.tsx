@@ -57,7 +57,7 @@ export function MessageItem({ message }: MessageItemProps) {
       {/* Content Bubble */}
       <div
         className={cn(
-          "relative max-w-[85%] min-w-[80px] rounded-2xl px-4 py-3 text-sm shadow-sm transition-colors",
+          "relative max-w-[85%] min-w-20 rounded-2xl px-4 py-3 text-sm shadow-sm transition-colors",
           isUser
             ? "bg-primary text-primary-foreground rounded-tr-none"
             : "bg-secondary text-secondary-foreground rounded-tl-none border border-border/50",
