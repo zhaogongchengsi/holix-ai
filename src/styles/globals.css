@@ -117,12 +117,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
-body, html {
+body,
+html {
   font-size: 14px;
 }
 
@@ -150,4 +152,17 @@ body, html {
 /* 提供一个便捷的属性选择器，允许在特殊元素上恢复拖拽阻止（例如需要拖拽的自定义元素） */
 .app-drag-region [data-drag] {
   -webkit-app-region: drag;
+}
+
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+
+  background-color: var(--muted);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--muted-foreground);
+  border-radius: 4px;
 }

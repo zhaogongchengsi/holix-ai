@@ -9,14 +9,15 @@ export function MainContent() {
   const messages = useChatMessages(chat?.uid);
 
   return (
-    <main className="h-(--app-chat-content-height) overflow-auto">
+    <main className="h-(--app-chat-content-height)">
       <Virtuoso
         style={{ height: "var(--app-chat-content-height)" }}
         data={messages}
+        className="custom-scrollbar"
         itemContent={(index, msg) => {
           return (
             <div key={msg.uid} className="p-2 border-b" data-index={index}>
-              <div className="text-sm text-gray-500 mb-1">{msg.role}</div>
+              <div className="text-sm text-muted-foreground mb-1">{msg.role}</div>
               <div>{msg.content}</div>
             </div>
           );
