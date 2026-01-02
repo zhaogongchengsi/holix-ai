@@ -1,5 +1,5 @@
 import { debounce } from "@tanstack/pacer/debouncer";
-import { Send } from "lucide-react";
+import { Coins, Send } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Editor } from "@/components/editor/editor";
 import { Button } from "@/components/ui/button";
@@ -27,8 +27,9 @@ export default function MainFooter() {
   return (
     <footer className="w-full mt-auto h-(--app-chat-footer-height) border-t">
       <div className="h-(--app-chat-input-header-height) border-b px-2 flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
-          Token: {formatTokenCount(estimatedTokens)}
+        <div className="text-sm text-muted-foreground flex ml-auto items-center gap-1.5">
+          <Coins className="w-4 h-4" />
+          <span>{formatTokenCount(estimatedTokens)}</span>
         </div>
       </div>
       <div className="h-(--app-chat-input-height) my-(--app-chat-input-gap) px-2">
