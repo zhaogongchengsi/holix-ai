@@ -9,7 +9,7 @@ import { configStore } from "./node/platform/config";
 import { logger } from "./node/platform/logger";
 import { providerStore } from "./node/platform/provider";
 import { AppWindow } from "./node/platform/window";
-import { useTrpcRouter } from "./node/server/handler";
+import { trpcRouter } from "./node/server/handler";
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
 
@@ -30,7 +30,7 @@ const router = createRouter();
 configStore.use(router);
 providerStore.use(router);
 onCommandForClient(router);
-useTrpcRouter(router);
+trpcRouter(router);
 router.get("/channel", createChannel());
 
 let window: AppWindow | null = null;

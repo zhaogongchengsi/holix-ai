@@ -4,14 +4,14 @@
  */
 
 import type { HolixProtocolRouter } from "@holix/router";
+import { logger } from "../platform/logger";
 import { appRouter } from "./router";
 import { createCaller } from "./trpc";
-import { logger } from "../platform/logger";
 
 /**
  * 注册 tRPC 路由处理
  */
-export function useTrpcRouter(router: HolixProtocolRouter) {
+export function trpcRouter(router: HolixProtocolRouter) {
 	const caller = createCaller(appRouter);
 
 	router.post("/trpc/:path", async (ctx, next) => {
@@ -60,7 +60,8 @@ export function useTrpcRouter(router: HolixProtocolRouter) {
 			const input = await ctx.req.json();
 
 			// 调用对应的 procedure
-			const procedureFn = namespaceCaller[method as keyof typeof namespaceCaller];
+			const procedureFn =
+				namespaceCaller[method as keyof typeof namespaceCaller];
 			if (typeof procedureFn !== "function") {
 				ctx.status(500).json({
 					error: "Invalid procedure",

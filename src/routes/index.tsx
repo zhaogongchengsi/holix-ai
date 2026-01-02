@@ -1,11 +1,11 @@
 import { debounce } from "@tanstack/pacer/debouncer";
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Editor } from "@/components/editor/editor";
-import { Button } from "@/components/ui/button";
 import ModuleSelector from "@/components/module-selectr";
-import useChat from "@/store/chat";
+import { Button } from "@/components/ui/button";
 import { inferProvider } from "@/share/models";
+import useChat from "@/store/chat";
 
 // 从 value 中提取标题：取前面部分内容
 const generateTitle = (text: string) => {
@@ -16,13 +16,17 @@ const generateTitle = (text: string) => {
     return match[1].replace(/\n/g, " ").trim();
   }
   // 如果没有标点，直接截取前 50 个字符
-  return trimmed.length > 50 ? trimmed.substring(0, 50) + "..." : trimmed;
+  return trimmed.length > 50 ? `${trimmed.substring(0, 50)}...` : trimmed;
 };
 
 function Index() {
   const [value, setValue] = useState("");
   const [model, setModel] = useState<string | undefined>();
   const chat = useChat();
+
+  useEffect(() => {
+    chat.loadChats();
+  }, [chat.loadChats]);
 
   const onTextChange = useCallback(
     debounce(
@@ -59,7 +63,7 @@ function Index() {
       .catch((err) => {
         console.error("Failed to create chat:", err);
       });
-  }, [value, model]);
+  }, [value, model, chat.createChat]);
 
   return (
     <div className="w-full flex justify-center items-center">

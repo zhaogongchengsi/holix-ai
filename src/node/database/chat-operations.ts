@@ -3,10 +3,10 @@
  * 提供 Chat 表的核心操作方法
  */
 
+import { eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
-import { eq } from "drizzle-orm";
 import { getDatabase } from "./connect";
-import { chats, type Chat, type ChatInsert } from "./schema/chat";
+import { type Chat, type ChatInsert, chats } from "./schema/chat";
 
 /**
  * 创建新会话
@@ -210,4 +210,39 @@ export async function updateChat(
 			updatedAt: Date.now(),
 		})
 		.where(eq(chats.uid, chatUid));
+}
+
+/**
+ * 查询所有会话
+ * @param options - 查询选项
+ * @param options.includeArchived - 是否包含已归档的会话，默认为 false
+ * @param options.orderBy - 排序方式，默认为 updatedAt 降序
+ * @returns 会话列表
+ */
+export async function getAllChats(options?: {
+	includeArchived?: boolean;
+	orderBy?: "updatedAt" | "createdAt" | "title";
+	order?: "asc" | "desc";
+}): Promise<Chat[]> {
+	const db = await getDatabase();
+
+	let query = db.select().from(chats);
+
+	// 默认不包含已归档的会话
+	if (!options?.includeArchived) {
+		query = query.where(eq(chats.archived, false)) as any;
+	}
+
+	// 排序
+	const orderBy = options?.orderBy || "updatedAt";
+	const order = options?.order || "desc";
+
+	if (order === "desc") {
+		query = query.orderBy(sql`${chats[orderBy]} DESC`) as any;
+	} else {
+		query = query.orderBy(sql`${chats[orderBy]} ASC`) as any;
+	}
+
+	const result = await query;
+	return result;
 }

@@ -1,8 +1,12 @@
 import { HolixProtocolRouter } from "@holix/router";
 import { z } from "zod";
+import {
+	createChat,
+	getAllChats,
+	getChatByUid,
+	updateChatModel,
+} from "../database/chat-operations";
 import { procedure, router } from "./trpc";
-import { createChat, getChatByUid, updateChatModel } from "../database/chat-operations";
-
 
 // 定义聊天相关的 procedures
 export const chatRouter = router({
@@ -54,7 +58,6 @@ export const chatRouter = router({
 
 	// 列出所有会话（无参数）
 	list: procedure().query(async () => {
-		// TODO: 实现列表查询
-		return [];
+		return await getAllChats();
 	}),
 });
