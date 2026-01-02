@@ -20,19 +20,31 @@ export function createLlm(model: string, config?: LlmConfig) {
 	}
 
 	if (provider === "anthropic") {
-		return createAnthropicAdapter(model, config);
+		return {
+			provider,
+			llm: createAnthropicAdapter(model, config),
+		}
 	}
 
 	if (provider === "openai") {
-		return createOpenAIAdapter(model, config);
+		return {
+			provider,
+			llm: createOpenAIAdapter(model, config),
+		}
 	}
 
 	if (provider === "gemini") {
-		return createGeminiAdapter(model, config);
+		return {
+			provider,
+			llm: createGeminiAdapter(model, config),
+		}
 	}
 
 	if (provider === "ollama") {
-		return createOllamaAdapter(model, config);
+		return {
+			provider,
+			llm: createOllamaAdapter(model, config),
+		}
 	}
 
 	throw new Error(`Unsupported provider: ${provider}`);

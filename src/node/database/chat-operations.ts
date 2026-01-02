@@ -1,0 +1,210 @@
+/**
+ * Chat Operations
+ * 提供 Chat 表的核心操作方法
+ */
+
+import { nanoid } from "nanoid";
+import { eq } from "drizzle-orm";
+import { getDatabase } from "./connect";
+import { chats, type Chat, type ChatInsert } from "./schema/chat";
+
+/**
+ * 创建新会话
+ * @param params - 创建参数
+ * @param params.provider - 提供方 (openai/anthropic/gemini/ollama)
+ * @param params.model - 模型名称
+ * @param params.title - 会话标题
+ * @returns 创建的会话记录
+ */
+export async function createChat(params: {
+	provider: string;
+	model: string;
+	title: string;
+}): Promise<Chat> {
+	const db = await getDatabase();
+	const uid = nanoid();
+	const now = Date.now();
+
+	const insert: ChatInsert = {
+		uid,
+		title: params.title,
+		provider: params.provider,
+		model: params.model,
+		status: "active",
+		pinned: false,
+		archived: false,
+		createdAt: now,
+		updatedAt: now,
+		lastSeq: 0,
+		lastMessagePreview: null,
+	};
+
+	await db.insert(chats).values(insert);
+
+	const [chat] = await db.select().from(chats).where(eq(chats.uid, uid));
+	return chat;
+}
+
+/**
+ * 修改会话的模型名称
+ * @param chatUid - 会话 UID
+ * @param model - 新的模型名称
+ */
+export async function updateChatModel(
+	chatUid: string,
+	model: string,
+): Promise<void> {
+	const db = await getDatabase();
+	await db
+		.update(chats)
+		.set({
+			model,
+			updatedAt: Date.now(),
+		})
+		.where(eq(chats.uid, chatUid));
+}
+
+/**
+ * 修改会话的最后消息预览
+ * @param chatUid - 会话 UID
+ * @param preview - 预览文本
+ */
+export async function updateLastMessagePreview(
+	chatUid: string,
+	preview: string | null,
+): Promise<void> {
+	const db = await getDatabase();
+	await db
+		.update(chats)
+		.set({
+			lastMessagePreview: preview,
+			updatedAt: Date.now(),
+		})
+		.where(eq(chats.uid, chatUid));
+}
+
+/**
+ * 修改会话标题
+ * @param chatUid - 会话 UID
+ * @param title - 新标题
+ */
+export async function updateChatTitle(
+	chatUid: string,
+	title: string,
+): Promise<void> {
+	const db = await getDatabase();
+	await db
+		.update(chats)
+		.set({
+			title,
+			updatedAt: Date.now(),
+		})
+		.where(eq(chats.uid, chatUid));
+}
+
+/**
+ * 获取会话详情
+ * @param chatUid - 会话 UID
+ * @returns 会话记录，不存在则返回 null
+ */
+export async function getChatByUid(chatUid: string): Promise<Chat | null> {
+	const db = await getDatabase();
+	const [chat] = await db.select().from(chats).where(eq(chats.uid, chatUid));
+	return chat || null;
+}
+
+/**
+ * 归档会话
+ * @param chatUid - 会话 UID
+ */
+export async function archiveChat(chatUid: string): Promise<void> {
+	const db = await getDatabase();
+	await db
+		.update(chats)
+		.set({
+			archived: true,
+			updatedAt: Date.now(),
+		})
+		.where(eq(chats.uid, chatUid));
+}
+
+/**
+ * 取消归档会话
+ * @param chatUid - 会话 UID
+ */
+export async function unarchiveChat(chatUid: string): Promise<void> {
+	const db = await getDatabase();
+	await db
+		.update(chats)
+		.set({
+			archived: false,
+			updatedAt: Date.now(),
+		})
+		.where(eq(chats.uid, chatUid));
+}
+
+/**
+ * 置顶/取消置顶会话
+ * @param chatUid - 会话 UID
+ * @param pinned - 是否置顶
+ */
+export async function updateChatPinned(
+	chatUid: string,
+	pinned: boolean,
+): Promise<void> {
+	const db = await getDatabase();
+	await db
+		.update(chats)
+		.set({
+			pinned,
+			updatedAt: Date.now(),
+		})
+		.where(eq(chats.uid, chatUid));
+}
+
+/**
+ * 删除会话（会级联删除所有消息）
+ * @param chatUid - 会话 UID
+ */
+export async function deleteChat(chatUid: string): Promise<void> {
+	const db = await getDatabase();
+	await db.delete(chats).where(eq(chats.uid, chatUid));
+}
+
+/**
+ * 更新会话的最后消息序号
+ * @param chatUid - 会话 UID
+ * @param seq - 新的序号
+ */
+export async function updateChatLastSeq(
+	chatUid: string,
+	seq: number,
+): Promise<void> {
+	const db = await getDatabase();
+	await db
+		.update(chats)
+		.set({
+			lastSeq: seq,
+			updatedAt: Date.now(),
+		})
+		.where(eq(chats.uid, chatUid));
+}
+
+/**
+ * 批量更新会话（通用方法）
+ * @param chatUid - 会话 UID
+ * @param updates - 要更新的字段
+ */
+export async function updateChat(
+	chatUid: string,
+	updates: Partial<Omit<Chat, "id" | "uid">>,
+): Promise<void> {
+	const db = await getDatabase();
+	await db
+		.update(chats)
+		.set({
+			...updates,
+			updatedAt: Date.now(),
+		})
+		.where(eq(chats.uid, chatUid));
+}
