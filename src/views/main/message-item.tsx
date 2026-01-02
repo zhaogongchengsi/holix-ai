@@ -7,9 +7,12 @@ import { formatWithLocalTZ } from "@/lib/time";
 
 interface MessageItemProps {
   message: Message;
+  index: number;
 }
 
-export function MessageItem({ message }: MessageItemProps) {
+export function MessageItem({ message, index }: MessageItemProps) {
+  console.log("Rendering MessageItem:", { index, message });
+
   const isUser = message.role === "user";
   const isSystem = message.role === "system";
   const isError = message.status === "error";
@@ -19,7 +22,7 @@ export function MessageItem({ message }: MessageItemProps) {
   // 如果是 system 消息，暂时简单展示
   if (isSystem) {
     return (
-      <div className="flex justify-center my-4">
+      <div className="flex justify-center my-4" data-message-index={index}>
         <div className="text-xs text-muted-foreground bg-muted/50 px-3 py-1 rounded-full flex items-center gap-1">
           <Sparkles className="w-3 h-3" />
           {message.content}
@@ -30,10 +33,8 @@ export function MessageItem({ message }: MessageItemProps) {
 
   return (
     <div
-      className={cn(
-        "flex w-full gap-3 p-4 group",
-        isUser ? "flex-row-reverse" : "flex-row"
-      )}
+      className={cn("flex w-full gap-3 p-4 group", isUser ? "flex-row-reverse" : "flex-row")}
+      data-message-index={index}
     >
       {/* Avatar */}
       <Avatar className="w-8 h-8 border shrink-0 shadow-sm">
@@ -62,7 +63,7 @@ export function MessageItem({ message }: MessageItemProps) {
             ? "bg-primary text-primary-foreground rounded-tr-none"
             : "bg-secondary text-secondary-foreground rounded-tl-none border border-border/50",
           isError && "border-destructive/50 bg-destructive/10 text-destructive",
-          isPending && "opacity-90"
+          isPending && "opacity-90",
         )}
       >
         {/* Status Indicator for AI */}
@@ -103,47 +104,57 @@ export function MessageItem({ message }: MessageItemProps) {
                 h2: ({ children }) => <h2 className="text-base font-bold mb-2">{children}</h2>,
                 h3: ({ children }) => <h3 className="text-sm font-bold mb-2">{children}</h3>,
                 code: ({ children, className, ...props }) => {
-                    // @ts-ignore
-                    const inline = !String(children).includes('\n');
-                    const codeClass = isUser 
-                        ? "bg-primary-foreground/20" 
-                        : "bg-muted-foreground/20";
+                  // @ts-ignore
+                  const inline = !String(children).includes("\n");
+                  const codeClass = isUser ? "bg-primary-foreground/20" : "bg-muted-foreground/20";
 
-                    return inline ? (
-                        <code className={cn("px-1 py-0.5 rounded font-mono text-xs", codeClass)} {...props}>
-                            {children}
-                        </code>
-                    ) : (
-                        <pre className={cn("p-2 rounded mb-2 overflow-x-auto font-mono text-xs", codeClass)}>
-                            <code {...props}>{children}</code>
-                        </pre>
-                    );
+                  return inline ? (
+                    <code className={cn("px-1 py-0.5 rounded font-mono text-xs", codeClass)} {...props}>
+                      {children}
+                    </code>
+                  ) : (
+                    <pre className={cn("p-2 rounded mb-2 overflow-x-auto font-mono text-xs", codeClass)}>
+                      <code {...props}>{children}</code>
+                    </pre>
+                  );
                 },
-                a: ({ children, href }) => <a href={href} className="underline underline-offset-2 hover:opacity-80" target="_blank" rel="noopener noreferrer">{children}</a>,
-                blockquote: ({ children }) => <blockquote className={cn("border-l-2 pl-4 italic mb-2", isUser ? "border-primary-foreground/50" : "border-primary/50")}>{children}</blockquote>,
+                a: ({ children, href }) => (
+                  <a
+                    href={href}
+                    className="underline underline-offset-2 hover:opacity-80"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {children}
+                  </a>
+                ),
+                blockquote: ({ children }) => (
+                  <blockquote
+                    className={cn(
+                      "border-l-2 pl-4 italic mb-2",
+                      isUser ? "border-primary-foreground/50" : "border-primary/50",
+                    )}
+                  >
+                    {children}
+                  </blockquote>
+                ),
               }}
             >
               {message.content}
             </ReactMarkdown>
           ) : (
-             <span className="italic opacity-50">
-               {isStreaming ? "..." : "No content"}
-             </span>
+            <span className="italic opacity-50">{isStreaming ? "..." : "No content"}</span>
           )}
         </div>
-        
+
         {/* Error Message Detail */}
         {isError && message.error && (
-            <div className="mt-2 text-xs opacity-80 border-t border-destructive/20 pt-2">
-                {message.error}
-            </div>
+          <div className="mt-2 text-xs opacity-80 border-t border-destructive/20 pt-2">{message.error}</div>
         )}
 
         {/* Time */}
         <div className={cn("flex items-center gap-1 mt-1 select-none", isUser ? "justify-end" : "justify-start")}>
-            <span className="text-[10px] opacity-40">
-                {formatWithLocalTZ(message.createdAt, "HH:mm")}
-            </span>
+          <span className="text-[10px] opacity-40">{formatWithLocalTZ(message.createdAt, "HH:mm")}</span>
         </div>
       </div>
     </div>

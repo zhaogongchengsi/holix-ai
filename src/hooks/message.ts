@@ -41,12 +41,13 @@ export function useMessageUpdates() {
 
 /**
  * 获取指定 chat 的消息
- * 使用浅比较优化性能
  */
 export function useChatMessages(chatUid: string | undefined) {
-	return useMessage(
-		(state) => (chatUid ? state.messagesByChatId[chatUid] || [] : []),
-		// // 使用浅比较，只有数组引用变化时才重新渲染
-		// (prev, next) => prev === next
+	return useMessage((state) =>
+		chatUid ? state.messagesByChatId[chatUid] || [] : [],
 	);
+}
+
+export function useIsMessageLoading() {
+	return useMessage((state) => state.isLoading);
 }
