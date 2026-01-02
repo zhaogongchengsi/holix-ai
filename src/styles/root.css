@@ -6,5 +6,15 @@
 :root {
 	--app-header-height: 46px;
 	--app-sidebar-width: 260px;
+
 	--app-chat-width: calc(100vw - var(--app-sidebar-width));
+	--app-chat-content-height: calc(100vh - var(--app-header-height) - var(--app-chat-footer-height) - 20px);
+	--app-chat-footer-height: 200px;
+
+	/* footer 输入区域的尺寸 */
+	--app-chat-input-height: 80px;
+	--app-chat-input-padding: 10px;
+	--app-chat-input-gap: 10px;
+	--app-chat-input-header-height: 40px;
+	--app-chat-input-footer-height: 40px;
 }
