@@ -1,6 +1,7 @@
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatOpenAI } from "@langchain/openai";
 import { inferProvider } from "@/share/models";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai"
 
 export function createAISession(model: string, config?: {
 	apiKey: string;
@@ -18,6 +19,10 @@ export function createAISession(model: string, config?: {
 
 	if (provider === "openai") {
 		return createOpenAIAdapter(model, config);
+	}
+
+	if (provider === "gemini") {
+		return createGeminiAdapter(model, config);
 	}
 
 	throw new Error(`Unsupported provider: ${provider}`);
@@ -51,3 +56,17 @@ function createOpenAIAdapter(model: string, config: { apiKey: string; baseURL: s
 		},
 	});
 }
+
+function createGeminiAdapter(model: string, config: { apiKey: string; baseURL: string; } | undefined) {
+	return new ChatGoogleGenerativeAI({
+		model: model,
+		temperature: 0.7,
+		apiKey: config?.apiKey || process.env.GOOGLE_API_KEY,
+		baseUrl: config?.baseURL || process.env.GOOGLE_BASE_URL,
+	});
+}
+
+const llm = createAISession("gpt-4", {
+	apiKey: "your-api-key",
+	baseURL: "https://api.openai.com/v1",
+})
