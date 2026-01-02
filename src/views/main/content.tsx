@@ -1,6 +1,7 @@
 import { useChatContext } from "@/context/chat";
 import { useChatMessages } from "@/hooks/message";
 import { Virtuoso } from "react-virtuoso";
+import { MessageItem } from "./message-item";
 
 export function MainContent() {
   const { chat } = useChatContext();
@@ -15,12 +16,7 @@ export function MainContent() {
         data={messages}
         className="custom-scrollbar"
         itemContent={(index, msg) => {
-          return (
-            <div key={msg.uid} className="p-2 border-b" data-index={index}>
-              <div className="text-sm text-muted-foreground mb-1">{msg.role}</div>
-              <div>{msg.content}</div>
-            </div>
-          );
+          return <MessageItem key={msg.uid} message={msg} />;
         }}
       />
     </main>
