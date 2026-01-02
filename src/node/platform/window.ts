@@ -19,7 +19,17 @@ export class AppWindow extends BrowserWindow {
 			trafficLightPosition: { x: 10, y: 10 },
 		});
 
-		const url = import.meta.env.BASE_URL;
+		const currentChatId = configStore.get("currentChatId");
+
+		let url = import.meta.env.BASE_URL;
+
+		console.log("Current Chat ID:", currentChatId);
+
+		if (currentChatId) {
+			url = url.concat(`chat/${currentChatId}`);
+			console.log("Loading URL with Chat ID:", url);
+		}
+
 		import.meta.env.DEV ? this.loadURL(url) : this.loadFile(url);
 
 		if (import.meta.env.DEV) {
@@ -30,22 +40,22 @@ export class AppWindow extends BrowserWindow {
 			const [width, height] = this.getSize();
 			await configStore.set("window", { width, height });
 		});
-		
+
 		// Window state change events -> send updates to renderer via orchestrator.update
-		this.on('minimize', () => {
-			update('window.minimize', {});
+		this.on("minimize", () => {
+			update("window.minimize", {});
 		});
 
-		this.on('maximize', () => {
-			update('window.maximize', { maximized: true });
+		this.on("maximize", () => {
+			update("window.maximize", { maximized: true });
 		});
 
-		this.on('unmaximize', () => {
-			update('window.maximize', { maximized: false });
+		this.on("unmaximize", () => {
+			update("window.maximize", { maximized: false });
 		});
 
-		this.on('close', () => {
-			update('window.close', {});
+		this.on("close", () => {
+			update("window.close", {});
 		});
 	}
 
@@ -69,8 +79,8 @@ export class AppWindow extends BrowserWindow {
 			}
 
 			next();
-			return
-		})
+			return;
+		});
 	}
 
 	showWhenReady() {

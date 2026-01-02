@@ -6,6 +6,7 @@ export interface ConfigData {
 		height: number;
 	};
 	theme: string;
+	currentChatId?: string;
 }
 
 export class Config extends Store<ConfigData> {
@@ -18,6 +19,7 @@ export class Config extends Store<ConfigData> {
 					height: 800,
 				},
 				theme: "system",
+				currentChatId: undefined,
 			},
 		});
 	}

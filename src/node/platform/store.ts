@@ -71,7 +71,7 @@ export class Store<D> {
 	}
 
 	use(router: HolixProtocolRouter) {
-		const _path = `/${this.basePath}` || `/${this.name}`;
+		const _path = this.basePath ? `/${this.basePath}` : `/${this.name}`;
 		router.get(_path, async (ctx) => {
 			ctx.json(this.getStore().data);
 		});

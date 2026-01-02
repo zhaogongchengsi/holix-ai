@@ -20,48 +20,56 @@ interface ChatStore {
 const useChat = create<ChatStore>((set) => {
 	const chats: Chat[] = [];
 
+	async function loadChats() {
+		try {
+			set({ isLoading: true });
+			const chats = await trpcClient.chat.list();
+			set({ chats, isLoading: false });
+		} catch (error) {
+			console.error("Failed to load chats:", error);
+			set({ isLoading: false });
+		}
+	}
+
+	async function createChat(params: {
+		provider: string;
+		model: string;
+		title: string;
+	}) {
+		try {
+			set({ isLoading: true });
+			const chat = await trpcClient.chat.create(params);
+
+			// 添加到列表并设置为当前会话
+			set((state) => ({
+				chats: [chat, ...state.chats],
+				isLoading: false,
+			}));
+
+			return chat;
+		} catch (error) {
+			console.error("Failed to create chat:", error);
+			set({ isLoading: false });
+			return null;
+		}
+	}
+
+	function addChat(chat: Chat) {
+		set((state) => ({
+			chats: [chat, ...state.chats],
+		}));
+	}
+
+	loadChats()
+
 	return {
 		chats: chats,
 		isLoading: false,
-
-		createChat: async (params) => {
-			try {
-				set({ isLoading: true });
-				const chat = await trpcClient.chat.create(params);
-
-				// 添加到列表并设置为当前会话
-				set((state) => ({
-					chats: [chat, ...state.chats],
-					isLoading: false,
-				}));
-
-				return chat;
-			} catch (error) {
-				console.error("Failed to create chat:", error);
-				set({ isLoading: false });
-				return null;
-			}
-		},
-
-		loadChats: async () => {
-			try {
-				set({ isLoading: true });
-				const chats = await trpcClient.chat.list();
-				set({ chats, isLoading: false });
-			} catch (error) {
-				console.error("Failed to load chats:", error);
-				set({ isLoading: false });
-			}
-		},
-
-		addChat: (chat) => {
-			set((state) => ({
-				chats: [chat, ...state.chats],
-			}));
-		},
+		createChat,
+		loadChats,
+		addChat,
 	};
 });
 
-useChat.getState().loadChats();
 
 export default useChat;
