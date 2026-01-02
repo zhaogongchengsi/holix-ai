@@ -4,25 +4,31 @@ import { useCallback, useMemo, useState } from "react";
 import { Editor } from "@/components/editor/editor";
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/context/chat";
+import { command } from "@/lib/command";
 import { estimateTokens, formatTokenCount } from "@/share/token";
 
 export default function MainFooter() {
   const [value, setValue] = useState("");
   const { chat } = useChatContext();
 
-  const onTextChange = useCallback(
-    debounce(
-      (text: string) => {
-        setValue(text);
-      },
-      {
-        wait: 300,
-      },
-    ),
-    [],
-  );
+  const onTextChange = useCallback((text: string) => {
+    setValue(text);
+  }, []);
 
   const estimatedTokens = useMemo(() => estimateTokens(value), [value]);
+
+  const onSend = useCallback(() => {
+    if (!chat || value.trim().length === 0) return;
+    console.log("Sending message to chat:", chat.uid, "Message:", value);
+    // 这里可以调用发送消息的逻辑
+
+    command("chat.message", {
+      chatId: chat.uid,
+      content: value,
+    });
+
+    setValue("");
+  }, [chat, value]);
 
   return (
     <footer className="w-full mt-auto h-(--app-chat-footer-height) border-t">
@@ -42,11 +48,22 @@ export default function MainFooter() {
             console.error(`editor:`, err ? err.message : "unknown error");
           }}
           onTextChange={onTextChange}
+          textValue={value}
+          keyboard={{
+            onEnter: () => {
+              onSend();
+              return true;
+            },
+            onShiftEnter: () => {
+              // Shift+Enter 允许换行
+              return false;
+            },
+          }}
         />
       </div>
 
       <div className="flex justify-end items-center h-(--app-chat-input-footer-height) px-2">
-        <Button disabled={!chat || value.trim().length === 0}>
+        <Button disabled={!chat || value.trim().length === 0} onClick={onSend}>
           <Send />
           Send
         </Button>

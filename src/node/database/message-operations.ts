@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { updateChatLastSeq } from "./chat-operations";
 import { getDatabase } from "./connect";
@@ -67,6 +67,29 @@ export async function createMessage(params: {
 }
 
 /**
+ * 创建用户消息（便捷方法）
+ * @param chatUid - 会话 UID
+ * @param content - 消息内容
+ * @returns 创建的用户消息记录
+ */
+export async function createUserMessage(
+	chatUid: string,
+	content: string,
+): Promise<Message> {
+	// 获取下一个序号
+	const seq = await getNextSeq(chatUid);
+
+	return await createMessage({
+		chatUid,
+		seq,
+		role: "user",
+		kind: "message",
+		content,
+		status: "done",
+	});
+}
+
+/**
  * 获取消息详情
  * @param messageUid - 消息 UID
  * @returns 消息记录，不存在则返回 null
@@ -86,31 +109,42 @@ export async function getMessageByUid(
  * 获取会话的所有消息
  * @param chatUid - 会话 UID
  * @param options - 查询选项
+ * @param options.beforeSeq - 查询小于等于此 seq 的消息（用于向前加载）
+ * @param options.limit - 限制数量，默认 200
+ * @param options.order - 排序方式，默认 desc（最新的在前）
  * @returns 消息列表
  */
 export async function getMessagesByChatUid(
 	chatUid: string,
 	options?: {
+		beforeSeq?: number;
 		limit?: number;
 		order?: "asc" | "desc";
 	},
 ): Promise<Message[]> {
 	const db = await getDatabase();
 
-	let query = db.select().from(message).where(eq(message.chatUid, chatUid));
+	// 基础条件
+	const conditions = [eq(message.chatUid, chatUid)];
 
-	// 排序
-	const order = options?.order || "asc";
+	// 如果指定了 beforeSeq，则查询小于等于该 seq 的消息
+	if (options?.beforeSeq !== undefined) {
+		conditions.push(sql`${message.seq} <= ${options.beforeSeq}`);
+	}
+
+	let query = db.select().from(message).where(and(...conditions));
+
+	// 排序：默认降序（最新的在前）
+	const order = options?.order || "desc";
 	if (order === "desc") {
 		query = query.orderBy(desc(message.seq)) as any;
 	} else {
 		query = query.orderBy(message.seq) as any;
 	}
 
-	// 限制数量
-	if (options?.limit) {
-		query = query.limit(options.limit) as any;
-	}
+	// 限制数量：默认 200
+	const limit = options?.limit || 200;
+	query = query.limit(limit) as any;
 
 	return await query;
 }

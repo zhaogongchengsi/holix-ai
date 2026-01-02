@@ -3,8 +3,8 @@
  * 用于实时推送消息流到渲染进程
  */
 
+import type { DraftSegment, Message } from "@/node/database/schema/chat";
 import type { EventEnvelope } from "./base";
-import type { DraftSegment } from "@/node/database/schema/chat";
 
 /**
  * 消息流开始
@@ -78,10 +78,7 @@ export type MessageCreatedEnvelope = EventEnvelope<
 	"message.created",
 	{
 		chatUid: string;
-		messageUid: string;
-		role: "user" | "assistant" | "system" | "tool";
-		content: string;
-		seq: number;
+		message: Message;
 	}
 >;
 

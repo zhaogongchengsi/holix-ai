@@ -9,6 +9,8 @@ import type { EditorState, LexicalEditor } from "lexical";
 import { $getRoot } from "lexical";
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { ControlledTextPlugin } from "./plugins/ControlledTextPlugin";
+import { KeyboardPlugin } from "./plugins/KeyboardPlugin";
 import type { EditorProps } from "./props";
 
 export function Editor(props: EditorProps) {
@@ -71,6 +73,10 @@ export function Editor(props: EditorProps) {
 				<HistoryPlugin delay={300} />
 				<AutoFocusPlugin />
 				{onChange && <OnChangePlugin onChange={onChange} />}
+				{props.textValue !== undefined && (
+					<ControlledTextPlugin textValue={props.textValue} />
+				)}
+				{props.keyboard && <KeyboardPlugin {...props.keyboard} />}
 			</LexicalComposer>
 		</div>
 	);

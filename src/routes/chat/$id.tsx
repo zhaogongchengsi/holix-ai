@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { ChatContext } from "@/context/chat";
 import { updateConfig } from "@/lib/config";
 import useChat from "@/store/chat";
@@ -18,8 +18,14 @@ function Component() {
     updateConfig("currentChatId", id);
   }, [id]);
 
+  // 使用 useMemo 优化 Context value，避免不必要的重渲染
+  const contextValue = useMemo(
+    () => ({ chat: chat || null, chatId: id }),
+    [chat, id]
+  );
+
   return (
-    <ChatContext.Provider value={{ chat: chat || null, chatId: id }}>
+    <ChatContext.Provider value={contextValue}>
       <div className="w-full h-[calc(100vh - var(--app-header-height))] flex flex-col">
         <MainContent />
         <MainFooter />

@@ -18,9 +18,29 @@ export interface EditorProps {
 
 	placeholder?: string;
 
-	ariaPlaceholder?: string
+	ariaPlaceholder?: string;
 
-	onChange?: (editorState: EditorState, editor: LexicalEditor, tags: Set<string>) => void
+	onChange?: (
+		editorState: EditorState,
+		editor: LexicalEditor,
+		tags: Set<string>,
+	) => void;
 
-	onTextChange?: (text: string, editor: LexicalEditor) => void
+	onTextChange?: (text: string, editor: LexicalEditor) => void;
+
+	textValue?: string;
+
+	/** 键盘事件回调 */
+	keyboard?: {
+		/** Enter 键按下 */
+		onEnter?: (event: KeyboardEvent) => boolean | void;
+		/** Shift+Enter 键按下 */
+		onShiftEnter?: (event: KeyboardEvent) => boolean | void;
+		/** Ctrl+Enter 或 Cmd+Enter 键按下 */
+		onCtrlEnter?: (event: KeyboardEvent) => boolean | void;
+		/** Escape 键按下 */
+		onEscape?: (event: KeyboardEvent) => boolean | void;
+		/** 其他键盘事件 */
+		onKeyDown?: (event: KeyboardEvent) => boolean | void;
+	};
 }
