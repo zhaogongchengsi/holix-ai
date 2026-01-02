@@ -37,6 +37,9 @@ export async function createChat(params: {
 		updatedAt: now,
 		lastSeq: 0,
 		lastMessagePreview: null,
+		pendingMessages: null,
+		prompts: JSON.stringify([]) as any,
+		workspace: null,
 	};
 
 	await db.insert(chats).values(insert);
