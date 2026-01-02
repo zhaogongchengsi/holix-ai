@@ -1,9 +1,10 @@
 import { debounce } from "@tanstack/pacer/debouncer";
 import { Send } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Editor } from "@/components/editor/editor";
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/context/chat";
+import { estimateTokens, formatTokenCount } from "@/share/token";
 
 export default function MainFooter() {
   const [value, setValue] = useState("");
@@ -21,9 +22,15 @@ export default function MainFooter() {
     [],
   );
 
+  const estimatedTokens = useMemo(() => estimateTokens(value), [value]);
+
   return (
-    <footer className="w-full mt-auto h-(--app-chat-footer-height) border-t py-(--app-chat-input-padding)">
-      <div className="h-(--app-chat-input-header-height) border-b px-2">header</div>
+    <footer className="w-full mt-auto h-(--app-chat-footer-height) border-t">
+      <div className="h-(--app-chat-input-header-height) border-b px-2 flex items-center justify-between">
+        <div className="text-sm text-muted-foreground">
+          Token: {formatTokenCount(estimatedTokens)}
+        </div>
+      </div>
       <div className="h-(--app-chat-input-height) my-(--app-chat-input-gap) px-2">
         <Editor
           placeholder="请输入问题"
