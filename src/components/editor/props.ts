@@ -40,6 +40,8 @@ export interface EditorProps {
 		onCtrlEnter?: (event: KeyboardEvent) => boolean | void;
 		/** Escape 键按下 */
 		onEscape?: (event: KeyboardEvent) => boolean | void;
+		/** Ctrl+S 或 Cmd+S 保存 */
+		onCtrlS?: (event: KeyboardEvent) => boolean | void;
 		/** 其他键盘事件 */
 		onKeyDown?: (event: KeyboardEvent) => boolean | void;
 	};

@@ -58,6 +58,12 @@ export default function MainFooter() {
               // Shift+Enter 允许换行
               return false;
             },
+            onCtrlS: () => {
+              // Ctrl+S 保存草稿或其他操作
+              console.log("Saving draft:", value);
+              // 这里可以添加保存草稿的逻辑
+              return true;
+            },
           }}
         />
       </div>

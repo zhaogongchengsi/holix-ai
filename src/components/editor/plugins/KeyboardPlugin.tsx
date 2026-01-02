@@ -16,6 +16,8 @@ export interface KeyboardPluginProps {
 	onCtrlEnter?: (event: KeyboardEvent) => boolean | void;
 	/** Escape 键按下回调 */
 	onEscape?: (event: KeyboardEvent) => boolean | void;
+	/** Ctrl+S 或 Cmd+S 保存回调 */
+	onCtrlS?: (event: KeyboardEvent) => boolean | void;
 	/** 其他键盘事件回调 */
 	onKeyDown?: (event: KeyboardEvent) => boolean | void;
 }
@@ -92,6 +94,17 @@ export function KeyboardPlugin(props: KeyboardPluginProps) {
 		);
 
 		function handleKeyDown(event: KeyboardEvent) {
+			// Ctrl+S 或 Cmd+S 保存
+			if ((event.ctrlKey || event.metaKey) && event.key === "s") {
+				if (props.onCtrlS) {
+					event.preventDefault();
+					const result = props.onCtrlS(event);
+					if (result ?? false) {
+						return;
+					}
+				}
+			}
+
 			if (props.onKeyDown) {
 				props.onKeyDown(event);
 			}
