@@ -1,12 +1,18 @@
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatOpenAI } from "@langchain/openai";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatOllama } from "@langchain/ollama";
 import { inferProvider } from "@/share/models";
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai"
 
-export function createAISession(model: string, config?: {
-	apiKey: string;
-	baseURL: string;
-}) {
+export interface LlmConfig {
+	apiKey?: string;
+	baseURL?: string;
+	temperature?: number;
+	maxTokens?: number;
+	streaming?: boolean;
+}
+
+export function createLlm(model: string, config?: LlmConfig) {
 	const provider = inferProvider(model);
 
 	if (!provider) {
@@ -25,13 +31,18 @@ export function createAISession(model: string, config?: {
 		return createGeminiAdapter(model, config);
 	}
 
+	if (provider === "ollama") {
+		return createOllamaAdapter(model, config);
+	}
+
 	throw new Error(`Unsupported provider: ${provider}`);
 }
 
-function createAnthropicAdapter(model: string, config?: { apiKey: string; baseURL: string; }) {
+function createAnthropicAdapter(model: string, config?: LlmConfig) {
 	return new ChatAnthropic({
 		modelName: model,
-		temperature: 0.7,
+		temperature: config?.temperature ?? 0.7,
+		maxTokens: config?.maxTokens,
 		apiKey: config?.apiKey || process.env.ANTHROPIC_API_KEY,
 		// 指定 Base URL（用于自定义端点或代理）
 		clientOptions: {
@@ -40,11 +51,12 @@ function createAnthropicAdapter(model: string, config?: { apiKey: string; baseUR
 	});
 }
 
-function createOpenAIAdapter(model: string, config: { apiKey: string; baseURL: string; } | undefined) {
+function createOpenAIAdapter(model: string, config?: LlmConfig) {
 	return new ChatOpenAI({
 		modelName: model,
-		temperature: 0.7,
-		streaming: true,
+		temperature: config?.temperature ?? 0.7,
+		maxTokens: config?.maxTokens,
+		streaming: config?.streaming ?? true,
 		// 指定 API Key
 		apiKey: config?.apiKey || process.env.OPENAI_API_KEY,
 		// 指定 Base URL（用于自定义端点或代理）
@@ -57,16 +69,23 @@ function createOpenAIAdapter(model: string, config: { apiKey: string; baseURL: s
 	});
 }
 
-function createGeminiAdapter(model: string, config: { apiKey: string; baseURL: string; } | undefined) {
+function createGeminiAdapter(model: string, config?: LlmConfig) {
 	return new ChatGoogleGenerativeAI({
 		model: model,
-		temperature: 0.7,
+		temperature: config?.temperature ?? 0.7,
+		maxOutputTokens: config?.maxTokens,
 		apiKey: config?.apiKey || process.env.GOOGLE_API_KEY,
+		// 指定 Base URL（用于自定义端点或代理）
 		baseUrl: config?.baseURL || process.env.GOOGLE_BASE_URL,
 	});
 }
 
-const llm = createAISession("gpt-4", {
-	apiKey: "your-api-key",
-	baseURL: "https://api.openai.com/v1",
-})
+function createOllamaAdapter(model: string, config?: LlmConfig) {
+	return new ChatOllama({
+		model: model,
+		temperature: config?.temperature ?? 0.7,
+		numCtx: config?.maxTokens,
+		// Ollama 通常运行在本地
+		baseUrl: config?.baseURL || process.env.OLLAMA_BASE_URL || "http://localhost:11434",
+	});
+}
