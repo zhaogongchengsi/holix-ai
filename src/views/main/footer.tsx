@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/context/chat";
 import { command } from "@/lib/command";
 import { trpcClient } from "@/lib/trpc-client";
-import { estimateTokens, formatTokenCount } from "@/share/token";
+import { estimateTokens, formatTokenCount } from "../../share/token";
 import ProviderModelSelector from "@/components/provider-model-selector";
 
 export default function MainFooter() {

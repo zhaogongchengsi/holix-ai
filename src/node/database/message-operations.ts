@@ -40,7 +40,9 @@ export async function createMessage(params: {
 		role: params.role,
 		kind: params.kind,
 		content: params.content || null,
-		draftContent: params.draftContent || null,
+		draftContent: params.draftContent 
+			? (JSON.stringify(params.draftContent) as any)
+			: null,
 		status: params.status || "done",
 		model: params.model || null,
 		searchable: true,
@@ -198,7 +200,7 @@ export async function updateMessageDraftContent(
 	await db
 		.update(message)
 		.set({
-			draftContent,
+			draftContent: JSON.stringify(draftContent) as any,
 			updatedAt: Date.now(),
 		})
 		.where(eq(message.uid, messageUid));
@@ -271,10 +273,20 @@ export async function updateMessage(
 	updates: Partial<Omit<Message, "id" | "uid" | "chatUid" | "seq">>,
 ): Promise<void> {
 	const db = await getDatabase();
+	
+	// 序列化 draftContent 和 toolPayload
+	const serializedUpdates = { ...updates };
+	if ('draftContent' in updates && updates.draftContent !== undefined && updates.draftContent !== null) {
+		(serializedUpdates as any).draftContent = JSON.stringify(updates.draftContent);
+	}
+	if ('toolPayload' in updates && updates.toolPayload !== undefined && updates.toolPayload !== null) {
+		(serializedUpdates as any).toolPayload = JSON.stringify(updates.toolPayload);
+	}
+	
 	await db
 		.update(message)
 		.set({
-			...updates,
+			...serializedUpdates,
 			updatedAt: Date.now(),
 		})
 		.where(eq(message.uid, messageUid));

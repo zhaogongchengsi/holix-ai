@@ -148,7 +148,7 @@ class ChatManager {
 
 					// 更新消息的 draftContent
 					await updateMessage(assistantMessageUid, {
-						draftContent: draftSegments as any,
+						draftContent: draftSegments,
 					});
 
 					// 推送到渲染进程（流式更新）
@@ -165,7 +165,7 @@ class ChatManager {
 			await updateMessage(assistantMessageUid, {
 				content: fullContent,
 				status: "done",
-				draftContent: draftSegments.map(s => ({ ...s, committed: true })) as any,
+				draftContent: draftSegments.map(s => ({ ...s, committed: true })),
 			});
 			session.status = "completed";
 
@@ -179,6 +179,11 @@ class ChatManager {
 				`[ChatManager] Session ${requestId} completed with ${fullContent.length} chars (${draftSegments.length} segments)`,
 			);
 		} catch (error: any) {
+			// 取消正在进行的流
+			if (!abortController.signal.aborted) {
+				abortController.abort();
+			}
+
 			// 检查是否是用户主动取消
 			if (error.name === "AbortError" || session.status === "aborted") {
 				await updateMessage(assistantMessageUid, { status: "aborted" });

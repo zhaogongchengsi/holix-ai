@@ -1,7 +1,7 @@
 import { debounce } from "@tanstack/pacer/debouncer";
 import { createFileRoute } from "@tanstack/react-router";
 import { Coins } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Editor } from "@/components/editor/editor";
 import ProviderModelSelector from "@/components/provider-model-selector";
 import { Button } from "@/components/ui/button";

@@ -2,7 +2,7 @@ import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOllama } from "@langchain/ollama";
-import { inferProvider } from "@/share/models";
+import { inferProvider } from "../../share/models";
 
 export interface LlmConfig {
 	apiKey?: string;
@@ -36,7 +36,8 @@ export function createLlm(model: string, config?: LlmConfig) {
 		return createOllamaAdapter(model, config)
 	}
 
-	throw new Error(`Unsupported provider: ${provider}`);
+	// 默认使用 OpenAI 适配器
+	return createOpenAIAdapter(model, config)
 }
 
 function createAnthropicAdapter(model: string, config?: LlmConfig) {
