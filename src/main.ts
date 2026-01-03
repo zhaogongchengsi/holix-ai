@@ -43,6 +43,7 @@ if (import.meta.env.PROD) {
 	router.use(
 		createStaticMiddleware({
 			root: resolve(import.meta.dirname,"../client"),
+			prefix: "/page",
 		}),
 	);
 }

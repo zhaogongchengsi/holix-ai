@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@holix/router':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.3
+        version: 0.0.3
       '@holix/static':
         specifier: ^0.0.3
-        version: 0.0.3(@holix/router@0.0.2)
+        version: 0.0.3(@holix/router@0.0.3)
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.69.0(react@19.2.3))
@@ -175,8 +175,8 @@ importers:
         specifier: 2.3.10
         version: 2.3.10
       '@holix/cli':
-        specifier: ^1.0.0
-        version: 1.0.0(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
+        specifier: ^1.0.1
+        version: 1.0.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
       '@tailwindcss/vite':
         specifier: ^4.1.18
         version: 4.1.18(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0))
@@ -993,11 +993,11 @@ packages:
     resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
     engines: {node: '>=18.0.0'}
 
-  '@holix/builder@1.0.0':
-    resolution: {integrity: sha512-mbKa4D6E2qKl9xkpfZ5ERNqiqvoSXjHDs01ZC+n9a64W5BQvaYwQckeTppuW7AY7o/uzsYjFmb3jcTXRlFkF2A==}
+  '@holix/builder@1.0.1':
+    resolution: {integrity: sha512-NWsDKmgmz3bRzis1ts/E5RZCdc3kOBK8/h9rfEM8j3WLfSafU4mAnQNwd0z6EGCfFDQYtY543Br5IyLh2C3YUQ==}
 
-  '@holix/cli@1.0.0':
-    resolution: {integrity: sha512-kHfnkcBW5D9yPaddgEfvjLHalBzhc0biBoXV5eM0lGgBVO7HvGwSL3lnBBVMIjDMahvnyah1T7hCtwr6U1zOvw==}
+  '@holix/cli@1.0.1':
+    resolution: {integrity: sha512-vXbUkl6m4Vqg+OYWppJ8gx8Gp1ei6oCPv8qgZhGeqFZlIQcy6j2kWgBnCeDCVCwc7mtHd8NMxkVCgT66L7HgJw==}
     hasBin: true
 
   '@holix/config@1.0.0':
@@ -1009,8 +1009,8 @@ packages:
   '@holix/ipc@1.0.0':
     resolution: {integrity: sha512-bVILlfmukDuP7D4GT44iFu2rdPoJOOgp04/FlQW4OVhtSDH7Egp0cPQ72Ct6ix4wCLXEgrBOdBk+QdKJuRuxiA==}
 
-  '@holix/router@0.0.2':
-    resolution: {integrity: sha512-Z5m73FvDB419v7d5raNoTWaZ2GbIMoOjkPzjNeMmpotiKe97gtj8dhhARtoifqSND6/r5i5BhiwTPnBNLXJAdQ==}
+  '@holix/router@0.0.3':
+    resolution: {integrity: sha512-PjWuFcbz1oL5r5LdvyEG1wjTHM4vuEAZqiUIbe5NhnR3j5x9+5hFpBD1I2fA8AjW3zUARUNsErRYq/RBH1u7og==}
 
   '@holix/static@0.0.3':
     resolution: {integrity: sha512-QH//mfdWNUHE045bcdjnqQA769p54xFO1t3nfiKSgMsQGDF4nFyEZ1rf5ymcGW5xwxRd5vp4k6tbkmnbBbkYRA==}
@@ -6191,7 +6191,7 @@ snapshots:
 
   '@google/generative-ai@0.24.1': {}
 
-  '@holix/builder@1.0.0(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)':
+  '@holix/builder@1.0.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)':
     dependencies:
       '@holix/config': 1.0.0
       pathe: 2.0.3
@@ -6210,9 +6210,9 @@ snapshots:
       - tsx
       - yaml
 
-  '@holix/cli@1.0.0(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)':
+  '@holix/cli@1.0.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)':
     dependencies:
-      '@holix/builder': 1.0.0(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
+      '@holix/builder': 1.0.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
       '@holix/config': 1.0.0
       '@holix/electron': 1.0.0
       '@tanstack/pacer': 0.17.0
@@ -6255,14 +6255,14 @@ snapshots:
 
   '@holix/ipc@1.0.0': {}
 
-  '@holix/router@0.0.2':
+  '@holix/router@0.0.3':
     dependencies:
       '@zunh/onion': 0.1.1-beta.2
       radix3: 1.1.2
 
-  '@holix/static@0.0.3(@holix/router@0.0.2)':
+  '@holix/static@0.0.3(@holix/router@0.0.3)':
     dependencies:
-      '@holix/router': 0.0.2
+      '@holix/router': 0.0.3
       micromatch: 4.0.8
 
   '@hono/node-server@1.19.7(hono@4.11.1)':

@@ -74,17 +74,13 @@ export class AppWindow extends BrowserWindow {
 		return new Promise<void>((resolve) => {
 			const currentChatId = configStore.get("currentChatId");
 
-			let url = import.meta.env.BASE_URL;
+			let url = import.meta.env.DEV ? import.meta.env.BASE_URL : "holix://app/page/";
 
 			if (currentChatId && import.meta.env.DEV) {
 				url = url.concat(`chat/${currentChatId}`);
 			}
 
-			const success = protocol.isProtocolHandled('holix')
-
-			console.log('Holix protocol handled:', success)
-
-			import.meta.env.DEV ? this.loadURL(url) : this.loadURL("holix://app/index.html");
+			import.meta.env.DEV ? this.loadURL(url) : this.loadURL(url);
 
 			this.webContents.openDevTools({ mode: "right" });
 
