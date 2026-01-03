@@ -175,8 +175,8 @@ importers:
         specifier: 2.3.10
         version: 2.3.10
       '@holix/cli':
-        specifier: ^1.0.1
-        version: 1.0.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
+        specifier: ^1.0.2
+        version: 1.0.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
       '@tailwindcss/vite':
         specifier: ^4.1.18
         version: 4.1.18(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0))
@@ -996,8 +996,8 @@ packages:
   '@holix/builder@1.0.1':
     resolution: {integrity: sha512-NWsDKmgmz3bRzis1ts/E5RZCdc3kOBK8/h9rfEM8j3WLfSafU4mAnQNwd0z6EGCfFDQYtY543Br5IyLh2C3YUQ==}
 
-  '@holix/cli@1.0.1':
-    resolution: {integrity: sha512-vXbUkl6m4Vqg+OYWppJ8gx8Gp1ei6oCPv8qgZhGeqFZlIQcy6j2kWgBnCeDCVCwc7mtHd8NMxkVCgT66L7HgJw==}
+  '@holix/cli@1.0.2':
+    resolution: {integrity: sha512-KdcVVeYWqvMbhcknv6SjpNjMTagW1zu/ps9Is7QMvMqcY1ZQUVAnc4Hrlflz8qnz6Nzqhzts/SNikYm+l3JDmg==}
     hasBin: true
 
   '@holix/config@1.0.0':
@@ -6210,7 +6210,7 @@ snapshots:
       - tsx
       - yaml
 
-  '@holix/cli@1.0.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)':
+  '@holix/cli@1.0.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)':
     dependencies:
       '@holix/builder': 1.0.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
       '@holix/config': 1.0.0
