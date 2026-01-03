@@ -4,6 +4,7 @@ import { Message } from "@/node/database/schema/chat";
 import { Bot, User, Loader2, AlertCircle, Brain, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { formatWithLocalTZ } from "@/lib/time";
+import { useMemo } from "react";
 
 interface MessageItemProps {
   message: Message;
@@ -30,6 +31,21 @@ export function MessageItem({ message, index }: MessageItemProps) {
       </div>
     );
   }
+
+  const content = useMemo(() => {
+    if (message.error) {
+      return message.content || "";
+    }
+
+    if (message.draftContent) {
+      return message.draftContent
+        .sort((a, b) => a.createdAt - b.createdAt)
+        .map((segment) => segment.content)
+        .join("");
+    }
+
+    return message.content || "";
+  }, [message.content, message.error, message.draftContent]);
 
   return (
     <div
@@ -93,7 +109,7 @@ export function MessageItem({ message, index }: MessageItemProps) {
 
         {/* Message Content */}
         <div className={cn("text-sm leading-relaxed wrap-break-word")}>
-          {message.content ? (
+          {content ? (
             <ReactMarkdown
               components={{
                 p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,

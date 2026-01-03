@@ -4,6 +4,7 @@ import { Store } from "./store";
 
 export interface ProviderData {
 	providers: AIProvider[];
+	defaultProvider?: string;
 }
 
 export class ProviderStore extends Store<ProviderData> {
@@ -69,6 +70,7 @@ export class ProviderStore extends Store<ProviderData> {
 						avatar: "☁️",
 					},
 				],
+				defaultProvider: undefined,
 			},
 			basePath: "providers",
 		});
@@ -117,6 +119,16 @@ export class ProviderStore extends Store<ProviderData> {
 
 		router.get(basePath, async (ctx) => {
 			ctx.json(this.list());
+		});
+
+		router.get(`${basePath}/default`, async (ctx) => {
+			ctx.json(this.get("defaultProvider") || null);
+		});
+
+		router.post(`${basePath}/default`, async (ctx) => {
+			const body = await ctx.req.json();
+			await this.set("defaultProvider", body.name);
+			ctx.json({ success: true });
 		});
 
 		router.get(`${basePath}/:name`, async (ctx) => {

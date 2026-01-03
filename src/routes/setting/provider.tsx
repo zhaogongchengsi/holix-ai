@@ -1,27 +1,32 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { addProvider, getProviders, updateProvider } from "@/lib/provider";
+import { addProvider, getDefaultProvider, getProviders, setDefaultProvider, updateProvider } from "@/lib/provider";
 import type { AIProvider } from "@/types/provider";
 
 export const Route = createFileRoute("/setting/provider")({
   component: RouteComponent,
   loader: async () => {
-    const providers = await getProviders();
-    return providers;
+    const [providers, defaultProvider] = await Promise.all([
+      getProviders(),
+      getDefaultProvider(),
+    ]);
+    return { providers, defaultProvider };
   },
 });
 
 function RouteComponent() {
-  const initialProviders = Route.useLoaderData();
+  const { providers: initialProviders, defaultProvider: initialDefaultProvider } = Route.useLoaderData();
   const [providers, setProviders] = useState<AIProvider[]>(initialProviders);
-  const [activeTab, setActiveTab] = useState(providers[0]?.name || "");
+  const [activeTab, setActiveTab] = useState(
+    initialDefaultProvider || providers[0]?.name || ""
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newProvider, setNewProvider] = useState<AIProvider>({
     name: "",
@@ -32,30 +37,40 @@ function RouteComponent() {
     avatar: "🤖",
   });
 
-  const handleUpdateProvider = async (name: string, field: keyof AIProvider, value: any) => {
+  const handleUpdateProvider = useCallback(async (name: string, field: keyof AIProvider, value: any) => {
     try {
       const updated = await updateProvider(name, { [field]: value });
       setProviders((prev) => prev.map((p) => (p.name === name ? updated : p)));
     } catch (error) {
       console.error("Failed to update provider:", error);
     }
-  };
+  }, []);
 
-  const handleToggle = async (name: string, enabled: boolean) => {
+  const handleToggle = useCallback(async (name: string, enabled: boolean) => {
     try {
       const updated = await updateProvider(name, { enabled });
       setProviders((prev) => prev.map((p) => (p.name === name ? updated : p)));
     } catch (error) {
       console.error("Failed to toggle provider:", error);
     }
-  };
+  }, []);
 
-  const handleAddProvider = async () => {
+  const handleTabChange = useCallback(async (value: string) => {
+    setActiveTab(value);
+    try {
+      await setDefaultProvider(value);
+    } catch (error) {
+      console.error("Failed to set default provider:", error);
+    }
+  }, []);
+
+  const handleAddProvider = useCallback(async () => {
     try {
       const created = await addProvider(newProvider);
       setProviders((prev) => [...prev, created]);
       setIsDialogOpen(false);
       setActiveTab(created.name);
+      await setDefaultProvider(created.name);
       setNewProvider({
         name: "",
         baseUrl: "",
@@ -68,7 +83,7 @@ function RouteComponent() {
       console.error("Failed to add provider:", error);
       alert("添加失败：" + (error as Error).message);
     }
-  };
+  }, [newProvider]);
 
   if (providers.length === 0) {
     return (
@@ -90,7 +105,7 @@ function RouteComponent() {
           新增
         </Button>
       </div>
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="mb-4 h-12! max-w-full overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/50">
           {providers.map((provider) => (
             <TabsTrigger key={provider.name} value={provider.name} className="h-8">

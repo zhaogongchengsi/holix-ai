@@ -24,3 +24,11 @@ export async function removeProvider(name: string) {
 export async function toggleProvider(name: string, enabled: boolean) {
 	return await kyInstance.patch(`providers/${name}/toggle`, { json: { enabled } }).json<AIProvider>();
 }
+
+export async function getDefaultProvider() {
+	return await kyInstance.get("providers/default").json<string | null>();
+}
+
+export async function setDefaultProvider(name: string) {
+	return await kyInstance.post("providers/default", { json: { name } }).json<{ success: boolean }>();
+}
