@@ -10,6 +10,39 @@ import {
 } from "./schema/chat";
 
 /**
+ * 反序列化消息中的 JSON 字段
+ * @param msg - 数据库查询出的消息对象
+ * @returns 反序列化后的消息对象
+ */
+function deserializeMessage(msg: Message): Message {
+	if (!msg) return msg;
+	
+	const deserialized = { ...msg };
+	
+	// 反序列化 draftContent
+	if (msg.draftContent && typeof msg.draftContent === 'string') {
+		try {
+			(deserialized as any).draftContent = JSON.parse(msg.draftContent);
+		} catch (error) {
+			console.error('Failed to parse draftContent:', error);
+			(deserialized as any).draftContent = null;
+		}
+	}
+	
+	// 反序列化 toolPayload
+	if (msg.toolPayload && typeof msg.toolPayload === 'string') {
+		try {
+			(deserialized as any).toolPayload = JSON.parse(msg.toolPayload);
+		} catch (error) {
+			console.error('Failed to parse toolPayload:', error);
+			(deserialized as any).toolPayload = null;
+		}
+	}
+	
+	return deserialized;
+}
+
+/**
  * 创建新消息
  * @param params - 创建参数
  * @returns 创建的消息记录
@@ -65,7 +98,7 @@ export async function createMessage(params: {
 	await updateChatLastSeq(params.chatUid, params.seq);
 
 	const [msg] = await db.select().from(message).where(eq(message.uid, uid));
-	return msg;
+	return deserializeMessage(msg);
 }
 
 /**
@@ -104,7 +137,7 @@ export async function getMessageByUid(
 		.select()
 		.from(message)
 		.where(eq(message.uid, messageUid));
-	return msg || null;
+	return msg ? deserializeMessage(msg) : null;
 }
 
 /**
@@ -148,7 +181,8 @@ export async function getMessagesByChatUid(
 	const limit = options?.limit || 200;
 	query = query.limit(limit) as any;
 
-	return await query;
+	const messages = await query;
+	return messages.map(deserializeMessage);
 }
 
 /**
@@ -324,8 +358,14 @@ export async function commitDraftContent(messageUid: string): Promise<void> {
 		return;
 	}
 
+	// 反序列化 draftContent
+	const deserializedMsg = deserializeMessage(msg);
+	if (!deserializedMsg.draftContent) {
+		return;
+	}
+
 	// 将草稿内容合并为最终内容
-	const content = msg.draftContent.map((segment) => segment.content).join("");
+	const content = deserializedMsg.draftContent.map((segment) => segment.content).join("");
 
 	await db
 		.update(message)
@@ -346,11 +386,12 @@ export async function getMessagesByRequestId(
 	requestId: string,
 ): Promise<Message[]> {
 	const db = await getDatabase();
-	return await db
+	const messages = await db
 		.select()
 		.from(message)
 		.where(eq(message.requestId, requestId))
 		.orderBy(message.seq);
+	return messages.map(deserializeMessage);
 }
 
 /**
@@ -366,7 +407,7 @@ export async function getMessageByStreamId(
 		.select()
 		.from(message)
 		.where(eq(message.streamId, streamId));
-	return msg || null;
+	return msg ? deserializeMessage(msg) : null;
 }
 
 /**
@@ -404,5 +445,6 @@ export async function searchMessages(
 	const messages = await query;
 
 	// 简单的内容过滤（可以后续优化为 FTS）
-	return messages.filter((msg) => msg.content && msg.content.includes(keyword));
+	const filtered = messages.filter((msg) => msg.content && msg.content.includes(keyword));
+	return filtered.map(deserializeMessage);
 }
