@@ -1,5 +1,7 @@
+import { resolve as pathResolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import type { HolixProtocolRouter } from "@holix/router";
-import { BrowserWindow } from "electron";
+import { BrowserWindow, protocol } from "electron";
 import { configStore } from "./config";
 import { update } from "./update";
 
@@ -19,19 +21,7 @@ export class AppWindow extends BrowserWindow {
 			trafficLightPosition: { x: 10, y: 10 },
 		});
 
-		const currentChatId = configStore.get("currentChatId");
 
-		let url = import.meta.env.BASE_URL;
-
-		if (currentChatId) {
-			url = url.concat(!import.meta.env.DEV ? `index.html/chat/${currentChatId}` : `chat/${currentChatId}`);
-		}
-
-		import.meta.env.DEV ? this.loadURL(url) : this.loadFile(url);
-
-		if (import.meta.env.DEV) {
-			this.webContents.openDevTools({ mode: "right" });
-		}
 
 		this.on("resized", async () => {
 			const [width, height] = this.getSize();
@@ -82,6 +72,22 @@ export class AppWindow extends BrowserWindow {
 
 	showWhenReady() {
 		return new Promise<void>((resolve) => {
+			const currentChatId = configStore.get("currentChatId");
+
+			let url = import.meta.env.BASE_URL;
+
+			if (currentChatId && import.meta.env.DEV) {
+				url = url.concat(`chat/${currentChatId}`);
+			}
+
+			const success = protocol.isProtocolHandled('holix')
+
+			console.log('Holix protocol handled:', success)
+
+			import.meta.env.DEV ? this.loadURL(url) : this.loadURL("holix://app/index.html");
+
+			this.webContents.openDevTools({ mode: "right" });
+
 			this.once("ready-to-show", () => {
 				this.show();
 				resolve();

@@ -1,3 +1,4 @@
+import { resolve } from "node:path";
 import { createRouter } from "@holix/router";
 import { createStaticMiddleware } from "@holix/static";
 import { app, protocol } from "electron";
@@ -34,14 +35,14 @@ onCommandForClient(router);
 trpcRouter(router);
 router.get("/channel", createChannel());
 
-const root = import.meta.env.BASE_URL.replace("file://", "")
+const root = import.meta.env.BASE_URL.replace("file://", "");
 
-console.log("Static root:", root);
+console.log(root, resolve(import.meta.dirname,"../client"));
 
 if (import.meta.env.PROD) {
 	router.use(
 		createStaticMiddleware({
-			root,
+			root: resolve(import.meta.dirname,"../client"),
 		}),
 	);
 }
