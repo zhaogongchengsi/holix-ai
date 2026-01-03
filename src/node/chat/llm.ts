@@ -10,41 +10,30 @@ export interface LlmConfig {
 	temperature?: number;
 	maxTokens?: number;
 	streaming?: boolean;
+	provider?: string;
 }
 
 export function createLlm(model: string, config?: LlmConfig) {
-	const provider = inferProvider(model);
+	let provider = config?.provider || inferProvider(model);
 
 	if (!provider) {
 		throw new Error(`Cannot infer provider for model: ${model}`);
 	}
 
 	if (provider === "anthropic") {
-		return {
-			provider,
-			llm: createAnthropicAdapter(model, config),
-		}
+		return createAnthropicAdapter(model, config)
 	}
 
 	if (provider === "openai") {
-		return {
-			provider,
-			llm: createOpenAIAdapter(model, config),
-		}
+		return createOpenAIAdapter(model, config)
 	}
 
 	if (provider === "gemini") {
-		return {
-			provider,
-			llm: createGeminiAdapter(model, config),
-		}
+		return createGeminiAdapter(model, config)
 	}
 
 	if (provider === "ollama") {
-		return {
-			provider,
-			llm: createOllamaAdapter(model, config),
-		}
+		return createOllamaAdapter(model, config)
 	}
 
 	throw new Error(`Unsupported provider: ${provider}`);
