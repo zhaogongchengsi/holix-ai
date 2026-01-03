@@ -175,8 +175,8 @@ importers:
         specifier: 2.3.10
         version: 2.3.10
       '@holix/cli':
-        specifier: ^1.0.4
-        version: 1.0.4(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
+        specifier: ^1.0.5
+        version: 1.0.5(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
       '@tailwindcss/vite':
         specifier: ^4.1.18
         version: 4.1.18(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0))
@@ -996,15 +996,15 @@ packages:
   '@holix/builder@1.0.2':
     resolution: {integrity: sha512-4rc76NpT7LbcqIp9G8ytfTR+NBIF5XTRDUGAXk69K0LMHjwAHc1RtlPmBAHfVY35hOz3KYv86DZYdPLoo4eAyg==}
 
-  '@holix/cli@1.0.4':
-    resolution: {integrity: sha512-1IcX7GnkvwkKyQPilybEcwrRG6riR4gufyR0VYAIycK55qPUPpB8AIgtk6bT25XePnMi42GQLwv6MO++gdsREw==}
+  '@holix/cli@1.0.5':
+    resolution: {integrity: sha512-eB1LiGfTKZAmlgWwd5v4Ly0C6rh86KX/plzHQzRk2wOENX66Hh+WCXocYWUWQAABXLQQKJo12spUaU1rq5L7Gg==}
     hasBin: true
 
   '@holix/config@1.0.0':
     resolution: {integrity: sha512-F/eXl3WEFFBHj88W+2DCm05zxX3CSzrWFlE96UltI15sqUJ3lXYl/Rtc4RlBfNpMnJeUrKM63eHLve566Rlt2w==}
 
-  '@holix/electron@1.0.1':
-    resolution: {integrity: sha512-S1Id79O8Zwz8QyUrcIFKYk5CJc103k1yIazQy289E5Rh0q4xRoPxHAV/q1zc/ndio0DDYYTlz1l1LESZaGITew==}
+  '@holix/electron@1.0.2':
+    resolution: {integrity: sha512-FZK+FKOsBlj6wU0q6mnrKOzl1OLIsf2fbn9CpEhKcTub6RMt3RN5k7JvwW7FRLeVHGEiqdr2/gCAsevShdPdzA==}
 
   '@holix/ipc@1.0.0':
     resolution: {integrity: sha512-bVILlfmukDuP7D4GT44iFu2rdPoJOOgp04/FlQW4OVhtSDH7Egp0cPQ72Ct6ix4wCLXEgrBOdBk+QdKJuRuxiA==}
@@ -6210,11 +6210,11 @@ snapshots:
       - tsx
       - yaml
 
-  '@holix/cli@1.0.4(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)':
+  '@holix/cli@1.0.5(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)':
     dependencies:
       '@holix/builder': 1.0.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
       '@holix/config': 1.0.0
-      '@holix/electron': 1.0.1
+      '@holix/electron': 1.0.2
       '@tanstack/pacer': 0.17.0
       c12: 3.3.3
       chokidar: 4.0.3
@@ -6247,7 +6247,7 @@ snapshots:
     dependencies:
       zod: 3.25.76
 
-  '@holix/electron@1.0.1':
+  '@holix/electron@1.0.2':
     dependencies:
       '@holix/ipc': 1.0.0
       consola: 3.4.2
