@@ -1,5 +1,7 @@
 import type { HolixProtocolRouter } from "@holix/router";
 import { BrowserWindow } from "electron";
+import { resolve } from "pathe";
+import logo from "public/logo.png";
 import { configStore } from "./config";
 import { update } from "./update";
 
@@ -17,7 +19,10 @@ export class AppWindow extends BrowserWindow {
 			show: false,
 			frame: import.meta.env.DEV,
 			trafficLightPosition: { x: 10, y: 10 },
+			icon: resolve(import.meta.dirname, logo),
 		});
+
+		console.log(resolve(import.meta.dirname, logo))
 
 		this.on("resized", async () => {
 			const [width, height] = this.getSize();

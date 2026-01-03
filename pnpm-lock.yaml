@@ -175,8 +175,8 @@ importers:
         specifier: 2.3.10
         version: 2.3.10
       '@holix/cli':
-        specifier: ^1.0.2
-        version: 1.0.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
+        specifier: ^1.0.3
+        version: 1.0.3(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
       '@tailwindcss/vite':
         specifier: ^4.1.18
         version: 4.1.18(vite@7.3.0(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0))
@@ -993,11 +993,11 @@ packages:
     resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
     engines: {node: '>=18.0.0'}
 
-  '@holix/builder@1.0.1':
-    resolution: {integrity: sha512-NWsDKmgmz3bRzis1ts/E5RZCdc3kOBK8/h9rfEM8j3WLfSafU4mAnQNwd0z6EGCfFDQYtY543Br5IyLh2C3YUQ==}
+  '@holix/builder@1.0.2':
+    resolution: {integrity: sha512-4rc76NpT7LbcqIp9G8ytfTR+NBIF5XTRDUGAXk69K0LMHjwAHc1RtlPmBAHfVY35hOz3KYv86DZYdPLoo4eAyg==}
 
-  '@holix/cli@1.0.2':
-    resolution: {integrity: sha512-KdcVVeYWqvMbhcknv6SjpNjMTagW1zu/ps9Is7QMvMqcY1ZQUVAnc4Hrlflz8qnz6Nzqhzts/SNikYm+l3JDmg==}
+  '@holix/cli@1.0.3':
+    resolution: {integrity: sha512-Fid2btuJCVXsbYnJbWKmGvdTEliFZ3FtWjl7wtCRiOuRFflb9DZaeALRqCKLl8MrR8UZQW7+T30xflXgXJeWfg==}
     hasBin: true
 
   '@holix/config@1.0.0':
@@ -6191,7 +6191,7 @@ snapshots:
 
   '@google/generative-ai@0.24.1': {}
 
-  '@holix/builder@1.0.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)':
+  '@holix/builder@1.0.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)':
     dependencies:
       '@holix/config': 1.0.0
       pathe: 2.0.3
@@ -6210,9 +6210,9 @@ snapshots:
       - tsx
       - yaml
 
-  '@holix/cli@1.0.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)':
+  '@holix/cli@1.0.3(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)':
     dependencies:
-      '@holix/builder': 1.0.1(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
+      '@holix/builder': 1.0.2(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(tsx@4.21.0)
       '@holix/config': 1.0.0
       '@holix/electron': 1.0.0
       '@tanstack/pacer': 0.17.0

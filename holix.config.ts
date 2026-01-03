@@ -9,6 +9,7 @@ export default {
 	},
 	alias: {
 		"@": path.resolve(__dirname, "./src"),
+		"public": path.resolve(__dirname, "./public"),
 	},
 	vitePlugins: [
 		tanstackRouter({
