@@ -74,9 +74,9 @@ export class AppWindow extends BrowserWindow {
 		return new Promise<void>((resolve) => {
 			const currentChatId = configStore.get("currentChatId");
 
-			let url = import.meta.env.DEV ? import.meta.env.BASE_URL : "holix://app/page/";
+			let url = import.meta.env.DEV ? import.meta.env.BASE_URL : "holix://app/";
 
-			if (currentChatId && import.meta.env.DEV) {
+			if (currentChatId) {
 				url = url.concat(`chat/${currentChatId}`);
 			}
 
