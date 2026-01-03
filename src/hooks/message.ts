@@ -23,20 +23,40 @@ export function useInitMessages() {
  */
 export function useMessageUpdates() {
 	const addMessage = useMessage((state) => state.addMessage);
+	const updateMessage = useMessage((state) => state.updateMessage);
 
 	useEffect(() => {
 		// 注册消息创建事件监听
-		const unsubscribe = onUpdate("message.created", (payload) => {
+		const unsubscribeCreated = onUpdate("message.created", (payload) => {
 			addMessage(payload.chatUid, payload.message);
+		});
+
+		// 注册消息流式更新事件监听
+		const unsubscribeStreaming = onUpdate("message.streaming", (payload) => {
+			updateMessage(payload.chatUid, payload.messageUid, {
+				content: payload.content,
+				status: "streaming",
+			});
+		});
+
+		// 注册消息状态更新事件监听
+		const unsubscribeUpdated = onUpdate("message.updated", (payload) => {
+			updateMessage(payload.chatUid, payload.messageUid, payload.updates);
 		});
 
 		// 清理函数
 		return () => {
-			if (typeof unsubscribe === "function") {
-				unsubscribe();
+			if (typeof unsubscribeCreated === "function") {
+				unsubscribeCreated();
+			}
+			if (typeof unsubscribeStreaming === "function") {
+				unsubscribeStreaming();
+			}
+			if (typeof unsubscribeUpdated === "function") {
+				unsubscribeUpdated();
 			}
 		};
-	}, [addMessage]);
+	}, [addMessage, updateMessage]);
 }
 
 // 空数组常量，避免每次都创建新实例

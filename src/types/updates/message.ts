@@ -7,6 +7,42 @@ import type { DraftSegment, Message } from "@/node/database/schema/chat";
 import type { EventEnvelope } from "./base";
 
 /**
+ * 消息创建事件
+ */
+export type MessageCreatedEnvelope = EventEnvelope<
+	"message.created",
+	{
+		chatUid: string;
+		message: Message;
+	}
+>;
+
+/**
+ * 消息流式更新（实时推送内容）
+ */
+export type MessageStreamingEnvelope = EventEnvelope<
+	"message.streaming",
+	{
+		chatUid: string;
+		messageUid: string;
+		content: string;  // 累积的完整内容
+		delta: string;    // 本次增量内容
+	}
+>;
+
+/**
+ * 消息更新事件（状态、错误等）
+ */
+export type MessageUpdatedEnvelope = EventEnvelope<
+	"message.updated",
+	{
+		chatUid: string;
+		messageUid: string;
+		updates: Partial<Message>;
+	}
+>;
+
+/**
  * 消息流开始
  */
 export type MessageStreamStartEnvelope = EventEnvelope<
@@ -58,34 +94,11 @@ export type MessageStreamErrorEnvelope = EventEnvelope<
 	}
 >;
 
-/**
- * 会话创建事件
- */
-export type ChatCreatedEnvelope = EventEnvelope<
-	"chat.created",
-	{
-		chatUid: string;
-		title: string;
-		model: string;
-		provider: string;
-	}
->;
-
-/**
- * 消息创建事件
- */
-export type MessageCreatedEnvelope = EventEnvelope<
-	"message.created",
-	{
-		chatUid: string;
-		message: Message;
-	}
->;
-
 export type ChatUpdateEnvelope =
+	| MessageCreatedEnvelope
+	| MessageStreamingEnvelope
+	| MessageUpdatedEnvelope
 	| MessageStreamStartEnvelope
 	| MessageStreamChunkEnvelope
 	| MessageStreamDoneEnvelope
-	| MessageStreamErrorEnvelope
-	| ChatCreatedEnvelope
-	| MessageCreatedEnvelope;
+	| MessageStreamErrorEnvelope;

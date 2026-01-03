@@ -33,6 +33,8 @@ interface MessageStore {
 	addMessage: (chatUid: string, message: Message) => void;
 	// 批量添加消息
 	addMessages: (chatUid: string, messages: Message[]) => void;
+	// 更新消息
+	updateMessage: (chatUid: string, messageUid: string, updates: Partial<Message>) => void;
 }
 
 const useMessage = create<MessageStore>((set, get) => {
@@ -127,6 +129,34 @@ const useMessage = create<MessageStore>((set, get) => {
 					messagesByChatId: {
 						...state.messagesByChatId,
 						[chatUid]: sortMessagesBySeq(updatedMessages, "asc"),
+					},
+				};
+			});
+		},
+
+		updateMessage: (chatUid: string, messageUid: string, updates: Partial<Message>) => {
+			set((state) => {
+				const currentMessages = state.messagesByChatId[chatUid];
+				if (!currentMessages) {
+					return state;
+				}
+
+				const messageIndex = currentMessages.findIndex(m => m.uid === messageUid);
+				if (messageIndex === -1) {
+					return state;
+				}
+
+				// 创建新的消息数组，更新指定消息
+				const updatedMessages = [...currentMessages];
+				updatedMessages[messageIndex] = {
+					...updatedMessages[messageIndex],
+					...updates,
+				};
+
+				return {
+					messagesByChatId: {
+						...state.messagesByChatId,
+						[chatUid]: updatedMessages,
 					},
 				};
 			});

@@ -13,7 +13,14 @@ export type EndChatCommand = Command<"chat.end", {
 	messageId: string
 }>;
 
+// 中止会话的AI回复
+export type AbortChatCommand = Command<"chat.abort", {
+	requestId?: string;  // 中止特定请求
+	chatId?: string;     // 中止聊天的所有会话
+}>;
+
 // 会话相关命令的联合类型（方便 dispatch/handler 使用）
 export type ChatCommands =
 	SendChatMessageCommand |
-	EndChatCommand;
+	EndChatCommand |
+	AbortChatCommand;
