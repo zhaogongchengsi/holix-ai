@@ -40,11 +40,7 @@ if (import.meta.env.PROD) {
 		createStaticMiddleware({
 			root: resolve(import.meta.dirname, "../client"),
 			prefix: "/",
-			ignorePaths: ["/api/**", "/channel/**", '/trpc/**', "/command/**", "/config/**", "/providers/**", "window/**"],
-			mimeTypes: {
-				".js": "application/javascript; charset=utf-8",
-				".css": "text/css; charset=utf-8",
-			}
+			ignorePaths: ["/api/**", "/channel/**", '/trpc/**', "/command/**", "/config/**", "/providers/**", "/window/**"],
 		}),
 	);
 }
