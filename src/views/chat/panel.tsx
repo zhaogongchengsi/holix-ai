@@ -27,7 +27,7 @@ export function ChatPanel(props: Chat) {
 					</span>
 				</div>
 
-				<span className="line-clamp-2 text-xs text-muted-foreground w-full break-words opacity-90">
+				<span className="line-clamp-2 text-xs text-muted-foreground w-full wrap-break-word opacity-90">
 					{props.lastMessagePreview || "No messages yet"}
 				</span>
 			</div>
