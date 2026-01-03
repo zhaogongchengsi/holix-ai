@@ -1,11 +1,13 @@
+import { AlertCircle, Bot, Brain, Loader2, Sparkles, User, X } from "lucide-react";
+import { useMemo } from "react";
+import ReactMarkdown from "react-markdown";
+import { MarkdownCode, MarkdownPre } from "@/components/markdown/code-block";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Message } from "@/node/database/schema/chat";
-import { Bot, User, Loader2, AlertCircle, Brain, Sparkles, X } from "lucide-react";
-import ReactMarkdown from "react-markdown";
+import { rehypeShiki } from "@/lib/shiki";
 import { formatWithLocalTZ } from "@/lib/time";
-import { useMemo } from "react";
+import { cn } from "@/lib/utils";
+import type { Message } from "@/node/database/schema/chat";
 
 interface MessageItemProps {
   message: Message;
@@ -13,25 +15,11 @@ interface MessageItemProps {
 }
 
 export function MessageItem({ message, index }: MessageItemProps) {
-  //   console.log("Rendering MessageItem:", { index, message });
-
   const isUser = message.role === "user";
   const isSystem = message.role === "system";
   const isError = message.status === "error";
   const isStreaming = message.status === "streaming";
   const isPending = message.status === "pending";
-
-  // 如果是 system 消息，暂时简单展示
-  if (isSystem) {
-    return (
-      <div className="flex justify-center my-4" data-message-index={index}>
-        <div className="text-xs text-muted-foreground bg-muted/50 px-3 py-1 rounded-full flex items-center gap-1">
-          <Sparkles className="w-3 h-3" />
-          {message.content}
-        </div>
-      </div>
-    );
-  }
 
   const content = useMemo(() => {
     if (message.error) {
@@ -51,6 +39,18 @@ export function MessageItem({ message, index }: MessageItemProps) {
 
     return message.content || "";
   }, [message.content, message.error, message.draftContent]);
+
+  // 如果是 system 消息，暂时简单展示
+  if (isSystem) {
+    return (
+      <div className="flex justify-center my-4" data-message-index={index}>
+        <div className="text-xs text-muted-foreground bg-muted/50 px-3 py-1 rounded-full flex items-center gap-1">
+          <Sparkles className="w-3 h-3" />
+          {message.content}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -127,6 +127,7 @@ export function MessageItem({ message, index }: MessageItemProps) {
         <div className={cn("text-sm leading-relaxed wrap-break-word")}>
           {content ? (
             <ReactMarkdown
+              rehypePlugins={[rehypeShiki as any]}
               components={{
                 p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
                 ul: ({ children }) => <ul className="list-disc pl-4 mb-2 last:mb-0">{children}</ul>,
@@ -135,21 +136,8 @@ export function MessageItem({ message, index }: MessageItemProps) {
                 h1: ({ children }) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
                 h2: ({ children }) => <h2 className="text-base font-bold mb-2">{children}</h2>,
                 h3: ({ children }) => <h3 className="text-sm font-bold mb-2">{children}</h3>,
-                code: ({ children, className, ...props }) => {
-                  // @ts-ignore
-                  const inline = !String(children).includes("\n");
-                  const codeClass = isUser ? "bg-primary-foreground/20" : "bg-muted-foreground/20";
-
-                  return inline ? (
-                    <code className={cn("px-1 py-0.5 rounded font-mono text-xs", codeClass)} {...props}>
-                      {children}
-                    </code>
-                  ) : (
-                    <pre className={cn("p-2 rounded mb-2 overflow-x-auto font-mono text-xs", codeClass)}>
-                      <code {...props}>{children}</code>
-                    </pre>
-                  );
-                },
+                code: MarkdownCode({ isUser }),
+                pre: MarkdownPre({ isUser }),
                 a: ({ children, href }) => (
                   <a
                     href={href}
