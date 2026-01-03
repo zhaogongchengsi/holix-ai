@@ -26,10 +26,6 @@ function Index() {
   const [model, setModel] = useState<string>("");
   const chat = useChat();
 
-  useEffect(() => {
-    chat.loadChats();
-  }, [chat.loadChats]);
-
   const onTextChange = useCallback(
     debounce(
       (text: string) => {
