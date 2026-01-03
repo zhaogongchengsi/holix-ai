@@ -22,8 +22,8 @@ const generateTitle = (text: string) => {
 
 function Index() {
   const [value, setValue] = useState("");
-  const [provider, setProvider] = useState<string | undefined>();
-  const [model, setModel] = useState<string | undefined>();
+  const [provider, setProvider] = useState<string>("");
+  const [model, setModel] = useState<string>("");
   const chat = useChat();
 
   useEffect(() => {

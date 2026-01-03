@@ -4,12 +4,20 @@ import type { AIProvider } from "@/types/provider";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 export interface ProviderModelSelectorProps {
+  initialProvider?: string;
+  initialModel?: string;
   onProviderChange?: (provider: string) => void;
   onModelChange?: (model: string) => void;
   className?: string;
 }
 
-export default function ProviderModelSelector({ onProviderChange, onModelChange, className }: ProviderModelSelectorProps) {
+export default function ProviderModelSelector({
+  initialProvider: propInitialProvider,
+  initialModel: propInitialModel,
+  onProviderChange,
+  onModelChange,
+  className,
+}: ProviderModelSelectorProps) {
   const [providers, setProviders] = useState<AIProvider[]>([]);
   const [selectedProvider, setSelectedProvider] = useState<string>("");
   const [selectedModel, setSelectedModel] = useState<string>("");
@@ -25,20 +33,30 @@ export default function ProviderModelSelector({ onProviderChange, onModelChange,
         const enabledProviders = providerList.filter((p) => p.enabled);
         setProviders(enabledProviders);
 
-        // 确定初始供应商（从配置文件的默认值开始）
-        const initialProvider = enabledProviders.find((p) => p.name === defaultProviderName) || enabledProviders[0];
+        // 确定初始供应商：优先使用传入的 initialProvider，其次使用默认配置
+        let targetProvider: AIProvider | undefined;
+        if (propInitialProvider) {
+          targetProvider = enabledProviders.find((p) => p.name === propInitialProvider);
+        }
+        if (!targetProvider) {
+          targetProvider = enabledProviders.find((p) => p.name === defaultProviderName) || enabledProviders[0];
+        }
 
-        if (initialProvider) {
-          setSelectedProvider(initialProvider.name);
+        if (targetProvider) {
+          setSelectedProvider(targetProvider.name);
 
-          // 确定初始模型（使用第一个可用模型）
-          const availableModels = initialProvider.models || [];
-          const initialModel = availableModels[0] || "";
+          // 确定初始模型：优先使用传入的 initialModel，其次使用第一个可用模型
+          const availableModels = targetProvider.models || [];
+          let targetModel = "";
+          if (propInitialModel && availableModels.includes(propInitialModel)) {
+            targetModel = propInitialModel;
+          } else {
+            targetModel = availableModels[0] || "";
+          }
 
-          if (initialModel) {
-            setSelectedModel(initialModel);
-            onProviderChange?.(initialProvider.name);
-            onModelChange?.(initialModel);
+          if (targetModel) {
+            setSelectedModel(targetModel);
+            // 不在初始化时触发回调，避免覆盖聊天的独立配置
           }
         }
       } catch (error) {
@@ -49,7 +67,7 @@ export default function ProviderModelSelector({ onProviderChange, onModelChange,
     };
 
     init();
-  }, []);
+  }, [propInitialProvider, propInitialModel]);
 
   const handleProviderChange = useCallback(
     (providerName: string) => {

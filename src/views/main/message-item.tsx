@@ -12,7 +12,7 @@ interface MessageItemProps {
 }
 
 export function MessageItem({ message, index }: MessageItemProps) {
-  console.log("Rendering MessageItem:", { index, message });
+//   console.log("Rendering MessageItem:", { index, message });
 
   const isUser = message.role === "user";
   const isSystem = message.role === "system";

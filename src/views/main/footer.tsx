@@ -1,16 +1,17 @@
-import { debounce } from "@tanstack/pacer/debouncer";
 import { Coins, Send } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Editor } from "@/components/editor/editor";
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/context/chat";
 import { command } from "@/lib/command";
+import { trpcClient } from "@/lib/trpc-client";
 import { estimateTokens, formatTokenCount } from "@/share/token";
 import ProviderModelSelector from "@/components/provider-model-selector";
 
 export default function MainFooter() {
   const [value, setValue] = useState("");
   const { chat } = useChatContext();
+
   const [provider, setProvider] = useState<string | undefined>(chat?.provider ?? undefined);
   const [model, setModel] = useState<string | undefined>(chat?.model ?? undefined);
 
@@ -19,6 +20,42 @@ export default function MainFooter() {
   }, []);
 
   const estimatedTokens = useMemo(() => estimateTokens(value), [value]);
+
+  const handleProviderChange = useCallback(
+    async (newProvider: string) => {
+      setProvider(newProvider);
+      if (chat) {
+        try {
+          const newChat = await trpcClient.chat.update({
+            uid: chat.uid,
+            provider: newProvider,
+          });
+
+          console.log("Updated chat provider:", newChat);
+        } catch (error) {
+          console.error("Failed to update provider:", error);
+        }
+      }
+    },
+    [chat],
+  );
+
+  const handleModelChange = useCallback(
+    async (newModel: string) => {
+      setModel(newModel);
+      if (chat) {
+        try {
+          await trpcClient.chat.update({
+            uid: chat.uid,
+            model: newModel,
+          });
+        } catch (error) {
+          console.error("Failed to update model:", error);
+        }
+      }
+    },
+    [chat],
+  );
 
   const onSend = useCallback(() => {
     if (!chat || value.trim().length === 0) return;
@@ -73,7 +110,12 @@ export default function MainFooter() {
 
       <div className="flex items-center h-(--app-chat-input-footer-height) px-2">
         <div>
-          <ProviderModelSelector onProviderChange={setProvider} onModelChange={setModel} />
+          <ProviderModelSelector
+            initialProvider={chat?.provider}
+            initialModel={chat?.model}
+            onProviderChange={handleProviderChange}
+            onModelChange={handleModelChange}
+          />
         </div>
         <Button className="ml-auto" disabled={!chat || value.trim().length === 0} onClick={onSend}>
           <Send />

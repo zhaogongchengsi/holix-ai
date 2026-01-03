@@ -68,6 +68,28 @@ export async function updateChatModel(
 }
 
 /**
+ * 更新会话信息（通用方法）
+ * @param chatUid - 会话 UID
+ * @param updates - 要更新的字段
+ */
+export async function updateChat(
+	chatUid: string,
+	updates: Partial<Pick<Chat, "provider" | "model" | "title" | "status" | "pinned" | "archived">>,
+): Promise<Chat> {
+	const db = await getDatabase();
+	await db
+		.update(chats)
+		.set({
+			...updates,
+			updatedAt: Date.now(),
+		})
+		.where(eq(chats.uid, chatUid));
+	
+	const [chat] = await db.select().from(chats).where(eq(chats.uid, chatUid));
+	return chat;
+}
+
+/**
  * 修改会话的最后消息预览
  * @param chatUid - 会话 UID
  * @param preview - 预览文本
@@ -193,24 +215,6 @@ export async function updateChatLastSeq(
 		.where(eq(chats.uid, chatUid));
 }
 
-/**
- * 批量更新会话（通用方法）
- * @param chatUid - 会话 UID
- * @param updates - 要更新的字段
- */
-export async function updateChat(
-	chatUid: string,
-	updates: Partial<Omit<Chat, "id" | "uid">>,
-): Promise<void> {
-	const db = await getDatabase();
-	await db
-		.update(chats)
-		.set({
-			...updates,
-			updatedAt: Date.now(),
-		})
-		.where(eq(chats.uid, chatUid));
-}
 
 /**
  * 查询所有会话

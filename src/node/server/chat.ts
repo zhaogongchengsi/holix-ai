@@ -4,6 +4,7 @@ import {
 	createChat,
 	getAllChats,
 	getChatByUid,
+	updateChat,
 	updateChatModel,
 } from "../database/chat-operations";
 import { procedure, router } from "./trpc";
@@ -54,6 +55,25 @@ export const chatRouter = router({
 		.mutation(async ({ input }) => {
 			await updateChatModel(input.chatUid, input.model);
 			return { success: true };
+		}),
+
+	// 更新会话信息（通用）
+	update: procedure()
+		.input(
+			z.object({
+				uid: z.string(),
+				provider: z.string().optional(),
+				model: z.string().optional(),
+				title: z.string().optional(),
+				status: z.enum(["active", "archived", "error"]).optional(),
+				pinned: z.boolean().optional(),
+				archived: z.boolean().optional(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			const { uid, ...updates } = input;
+			const chat = await updateChat(uid, updates);
+			return chat;
 		}),
 
 	// 列出所有会话（无参数）
