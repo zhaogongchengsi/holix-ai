@@ -1,4 +1,5 @@
 import { createRouter } from "@holix/router";
+import { createStaticMiddleware } from "@holix/static";
 import { app, protocol } from "electron";
 import { initChat } from "./node/chat/init";
 import { SCHEME } from "./node/constant";
@@ -32,6 +33,18 @@ providerStore.use(router);
 onCommandForClient(router);
 trpcRouter(router);
 router.get("/channel", createChannel());
+
+const root = import.meta.env.BASE_URL.replace("file://", "")
+
+console.log("Static root:", root);
+
+if (import.meta.env.PROD) {
+	router.use(
+		createStaticMiddleware({
+			root,
+		}),
+	);
+}
 
 let window: AppWindow | null = null;
 const gotSingleInstanceLock = app.requestSingleInstanceLock();
