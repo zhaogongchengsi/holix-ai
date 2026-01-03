@@ -77,6 +77,39 @@ export const OLLAMA_MODELS = [
 ] as const;
 export type OllamaModel = (typeof OLLAMA_MODELS)[number];
 
+// 智谱AI - GLM 系列
+export const ZHIPU_MODELS = [
+	"glm-4-plus",
+	"glm-4-air",
+	"glm-4-flash",
+	"glm-4",
+	"glm-3-turbo",
+] as const;
+export type ZhipuModel = (typeof ZHIPU_MODELS)[number];
+
+// DeepSeek
+export const DEEPSEEK_MODELS = [
+	"deepseek-chat",
+	"deepseek-reasoner",
+] as const;
+export type DeepSeekModel = (typeof DEEPSEEK_MODELS)[number];
+
+// Moonshot
+export const MOONSHOT_MODELS = [
+	"moonshot-v1-8k",
+	"moonshot-v1-32k",
+	"moonshot-v1-128k",
+] as const;
+export type MoonshotModel = (typeof MOONSHOT_MODELS)[number];
+
+// 阿里云百炼 - Qwen
+export const QWEN_MODELS = [
+	"qwen-max",
+	"qwen-plus",
+	"qwen-turbo",
+] as const;
+export type QwenModel = (typeof QWEN_MODELS)[number];
+
 // 汇总所有已知模型名称（便于全局类型或下拉选择）
 export type KnownModelName =
 	| OpenAIChatModel
@@ -84,7 +117,11 @@ export type KnownModelName =
 	| OpenAIVideoModel
 	| AnthropicModel
 	| GeminiModel
-	| OllamaModel;
+	| OllamaModel
+	| ZhipuModel
+	| DeepSeekModel
+	| MoonshotModel
+	| QwenModel;
 
 export const PROVIDER_MODELS = {
 	openai: {
@@ -94,10 +131,12 @@ export const PROVIDER_MODELS = {
 	},
 	anthropic: ANTHROPIC_MODELS,
 	gemini: GEMINI_MODELS,
-	ollama: OLLAMA_MODELS,
-} as const;
+	ollama: OLLAMA_MODELS,	zhipu: ZHIPU_MODELS,
+	deepseek: DEEPSEEK_MODELS,
+	moonshot: MOONSHOT_MODELS,
+	qwen: QWEN_MODELS,} as const;
 
-export type ProviderType = "openai" | "anthropic" | "gemini" | "ollama";
+export type ProviderType = "openai" | "anthropic" | "gemini" | "ollama" | "zhipu" | "deepseek" | "moonshot" | "qwen";
 
 export function inferProvider(model: string): ProviderType | null {
 	if (
@@ -122,6 +161,29 @@ export function inferProvider(model: string): ProviderType | null {
 		return "ollama";
 	}
 
+	if (ZHIPU_MODELS.includes(model as ZhipuModel)) {
+		return "zhipu";
+	}
+
+	if (DEEPSEEK_MODELS.includes(model as DeepSeekModel)) {
+		return "deepseek";
+	}
+
+	if (MOONSHOT_MODELS.includes(model as MoonshotModel)) {
+		return "moonshot";
+	}
+
+	if (QWEN_MODELS.includes(model as QwenModel)) {
+		return "qwen";
+	}
+
+	// Fallback: 根据模型名称前缀推断
+	const lower = model.toLowerCase();
+	if (lower.startsWith("glm-")) return "zhipu";
+	if (lower.startsWith("deepseek")) return "deepseek";
+	if (lower.startsWith("moonshot")) return "moonshot";
+	if (lower.startsWith("qwen")) return "qwen";
+
 	return null;
 }
 
@@ -132,5 +194,9 @@ export default {
 	ANTHROPIC_MODELS,
 	GEMINI_MODELS,
 	OLLAMA_MODELS,
+	ZHIPU_MODELS,
+	DEEPSEEK_MODELS,
+	MOONSHOT_MODELS,
+	QWEN_MODELS,
 	PROVIDER_MODELS,
 };

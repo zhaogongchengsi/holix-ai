@@ -1,7 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Message } from "@/node/database/schema/chat";
-import { Bot, User, Loader2, AlertCircle, Brain, Sparkles } from "lucide-react";
+import { Bot, User, Loader2, AlertCircle, Brain, Sparkles, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { formatWithLocalTZ } from "@/lib/time";
 import { useMemo } from "react";
@@ -12,7 +13,7 @@ interface MessageItemProps {
 }
 
 export function MessageItem({ message, index }: MessageItemProps) {
-//   console.log("Rendering MessageItem:", { index, message });
+  //   console.log("Rendering MessageItem:", { index, message });
 
   const isUser = message.role === "user";
   const isSystem = message.role === "system";
@@ -35,6 +36,10 @@ export function MessageItem({ message, index }: MessageItemProps) {
   const content = useMemo(() => {
     if (message.error) {
       return message.content || "";
+    }
+
+    if (message.content) {
+      return message.content;
     }
 
     if (message.draftContent) {
@@ -89,6 +94,17 @@ export function MessageItem({ message, index }: MessageItemProps) {
               <>
                 <Loader2 className="w-3 h-3 animate-spin text-primary" />
                 <span className="font-medium">Generating...</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-5 w-5 p-0 ml-1 hover:bg-destructive/20 hover:text-destructive rounded-full"
+                  onClick={() => {
+                    // TODO: 实现取消功能
+                    console.log("Cancel streaming for message:", message.uid);
+                  }}
+                >
+                  <X className="w-3 h-3" />
+                </Button>
               </>
             ) : (
               <>
@@ -156,7 +172,7 @@ export function MessageItem({ message, index }: MessageItemProps) {
                 ),
               }}
             >
-              {message.content}
+              {content}
             </ReactMarkdown>
           ) : (
             <span className="italic opacity-50">{isStreaming ? "..." : "No content"}</span>

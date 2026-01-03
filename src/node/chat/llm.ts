@@ -14,7 +14,7 @@ export interface LlmConfig {
 }
 
 export function createLlm(model: string, config?: LlmConfig) {
-	let provider = config?.provider || inferProvider(model);
+	let provider = config?.provider?.toLowerCase() || inferProvider(model);
 
 	if (!provider) {
 		throw new Error(`Cannot infer provider for model: ${model}`);
@@ -24,16 +24,17 @@ export function createLlm(model: string, config?: LlmConfig) {
 		return createAnthropicAdapter(model, config)
 	}
 
-	if (provider === "openai") {
-		return createOpenAIAdapter(model, config)
-	}
-
 	if (provider === "gemini") {
 		return createGeminiAdapter(model, config)
 	}
 
 	if (provider === "ollama") {
 		return createOllamaAdapter(model, config)
+	}
+
+	// 智谱AI、DeepSeek、Moonshot、Qwen 都使用 OpenAI 兼容接口
+	if (provider === "zhipu" || provider === "智谱ai" || provider === "deepseek" || provider === "moonshot" || provider === "qwen" || provider === "阿里云百炼" || provider === "openai") {
+		return createOpenAIAdapter(model, config)
 	}
 
 	// 默认使用 OpenAI 适配器

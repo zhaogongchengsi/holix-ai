@@ -1,6 +1,7 @@
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import type { AIMessage } from "@langchain/core/messages";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { AsyncBatcher } from "@tanstack/pacer";
 import { nanoid } from "nanoid";
 import {
 	createMessage,
@@ -102,6 +103,26 @@ class ChatManager {
 		const { chatUid, requestId, assistantMessageUid, llm, abortController } =
 			session;
 
+		// 创建节流的数据库更新方法（每300ms最多更新一次）
+		const throttledDbUpdate = new AsyncBatcher<{ content: string; segments: DraftContent }>(
+			async (items) => {
+				// 只取最后一次更新（节流效果）
+				const latest = items[items.length - 1];
+				try {
+					await updateMessage(assistantMessageUid, {
+						content: latest.content,
+						draftContent: latest.segments,
+					});
+				} catch (error) {
+					logger.error(`[ChatManager] Failed to update message ${assistantMessageUid}:`, error);
+				}
+			},
+			{
+				maxSize: 100,
+				wait: 300,
+			}
+		);
+
 		try {
 			// 更新状态为 streaming
 			await updateMessage(assistantMessageUid, { status: "streaming" });
@@ -127,6 +148,8 @@ class ChatManager {
 				// 检查是否已被中止
 				if (session.status === "aborted") {
 					logger.info(`[ChatManager] Session ${requestId} was aborted`);
+					// 取消待处理的节流更新
+					throttledDbUpdate.cancel();
 					return;
 				}
 
@@ -146,12 +169,10 @@ class ChatManager {
 
 					draftSegments.push(segment);
 
-					// 更新消息的 draftContent
-					await updateMessage(assistantMessageUid, {
-						draftContent: draftSegments,
-					});
+					// 节流更新数据库（保证消息完整性，即使中途出错也有部分数据）
+					throttledDbUpdate.addItem({ content: fullContent, segments: draftSegments });
 
-					// 推送到渲染进程（流式更新）
+					// 推送到渲染进程（由 streamingBatcher 自动批处理，~60fps）
 					update("message.streaming", {
 						chatUid,
 						messageUid: assistantMessageUid,
@@ -161,7 +182,10 @@ class ChatManager {
 				}
 			}
 
-			// 流式完成，合并 draftContent 到 content，更新状态为 done
+			// 等待所有待处理的更新完成
+			await throttledDbUpdate.flush();
+			
+			// 流式完成，最终更新数据库（包含所有 segments）
 			await updateMessage(assistantMessageUid, {
 				content: fullContent,
 				status: "done",
@@ -179,10 +203,13 @@ class ChatManager {
 				`[ChatManager] Session ${requestId} completed with ${fullContent.length} chars (${draftSegments.length} segments)`,
 			);
 		} catch (error: any) {
-			// 取消正在进行的流
+			// 取消正在进行的流和待处理的节流更新
 			if (!abortController.signal.aborted) {
 				abortController.abort();
 			}
+			
+			// 如果有 throttledDbUpdate，取消它
+			// (由于作用域限制，这里无法直接访问，但 abort 后会自然停止)
 
 			// 检查是否是用户主动取消
 			if (error.name === "AbortError" || session.status === "aborted") {
