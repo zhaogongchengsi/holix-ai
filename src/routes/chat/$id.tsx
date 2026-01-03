@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { ChatContext } from "@/context/chat";
 import { SettingsPanelProvider } from "@/context/settings-panel";
 import { updateConfig } from "@/lib/config";
@@ -63,13 +64,14 @@ function Component() {
 						<div className="w-80 border-l bg-background flex flex-col">
 							<div className="h-(--app-header-height) border-b px-4 flex items-center justify-between">
 								<h2 className="text-sm font-semibold">设置</h2>
-								<button
+								<Button
 									className="text-muted-foreground hover:text-foreground transition-colors"
 									onClick={() => setIsSettingsPanelOpen(false)}
 									title="关闭"
+                  variant="ghost"
 								>
 									✕
-								</button>
+								</Button>
 							</div>
 							<div className="flex-1 overflow-auto p-4">
 								<p className="text-sm text-muted-foreground">设置面板内容</p>
