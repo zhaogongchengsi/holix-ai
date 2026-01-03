@@ -5,17 +5,17 @@ import { useInitMessages, useMessageUpdates } from "@/hooks/message";
 import { router } from "./router";
 
 export default function App() {
-	// 初始化所有数据
-	useInitChats();
-	useInitMessages();
+  // 初始化所有数据
+  useInitChats();
+  useInitMessages();
 
-	// 监听所有更新事件
-	useChatUpdates();
-	useMessageUpdates();
+  // 监听所有更新事件
+  useChatUpdates();
+  useMessageUpdates();
 
-	return (
-		<ThemeProvider>
-			<RouterProvider router={router} defaultPreload="intent" />
-		</ThemeProvider>
-	);
+  return (
+    <ThemeProvider>
+      <RouterProvider router={router} defaultPreload="intent" />
+    </ThemeProvider>
+  );
 }
