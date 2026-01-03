@@ -164,13 +164,13 @@ function RouteComponent() {
                       handleUpdateProvider(
                         provider.name,
                         "models",
-                        e.target.value.split(",").map((m) => m.trim()),
+                        e.target.value.split(/[,，/|\s]+/).map((m) => m.trim()).filter(Boolean),
                       )
                     }
                     placeholder="model-1, model-2, model-3"
                     className="mt-1.5"
                   />
-                  <p className="text-xs text-muted-foreground mt-1.5">多个模型用逗号分隔</p>
+                  <p className="text-xs text-muted-foreground mt-1.5">多个模型可用逗号、空格、/、| 等分隔</p>
                 </div>
               </div>
 
@@ -257,7 +257,7 @@ function RouteComponent() {
                 onChange={(e) =>
                   setNewProvider({
                     ...newProvider,
-                    models: e.target.value.split(",").map((m) => m.trim()),
+                    models: e.target.value.split(/[,，/|\s]+/).map((m) => m.trim()).filter(Boolean),
                   })
                 }
                 className="col-span-3"
