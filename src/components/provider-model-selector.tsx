@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 export interface ProviderModelSelectorProps {
   initialProvider?: string;
   initialModel?: string;
+  triggerOnInitialize?: boolean;
   onProviderChange?: (provider: string) => void;
   onModelChange?: (model: string) => void;
   className?: string;
@@ -14,6 +15,7 @@ export interface ProviderModelSelectorProps {
 export default function ProviderModelSelector({
   initialProvider: propInitialProvider,
   initialModel: propInitialModel,
+  triggerOnInitialize = false,
   onProviderChange,
   onModelChange,
   className,
@@ -56,7 +58,11 @@ export default function ProviderModelSelector({
 
           if (targetModel) {
             setSelectedModel(targetModel);
-            // 不在初始化时触发回调，避免覆盖聊天的独立配置
+            // 如果设置了 triggerOnInitialize，在初始化时触发回调
+            if (triggerOnInitialize) {
+              onProviderChange?.(targetProvider.name);
+              onModelChange?.(targetModel);
+            }
           }
         }
       } catch (error) {
@@ -67,7 +73,7 @@ export default function ProviderModelSelector({
     };
 
     init();
-  }, [propInitialProvider, propInitialModel]);
+  }, [propInitialProvider, propInitialModel, triggerOnInitialize]);
 
   const handleProviderChange = useCallback(
     (providerName: string) => {

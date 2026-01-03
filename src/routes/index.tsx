@@ -73,7 +73,7 @@ function Index() {
           onTextChange={onTextChange}
         />
         <div className="flex items-center gap-2">
-          <ProviderModelSelector onProviderChange={setProvider} onModelChange={setModel} />
+          <ProviderModelSelector triggerOnInitialize onProviderChange={setProvider} onModelChange={setModel} />
           <div className="text-sm text-muted-foreground flex items-center gap-1.5">
             <Coins className="w-4 h-4" />
             <span>{formatTokenCount(estimatedTokens)}</span>

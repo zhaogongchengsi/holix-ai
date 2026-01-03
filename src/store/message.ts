@@ -76,10 +76,12 @@ const useMessage = create<MessageStore>((set, get) => {
 					order: "asc",
 				});
 				
+				const sortedMessages = sortMessagesBySeq(msgs, "asc");
+				
 				set((state) => ({
 					messagesByChatId: {
 						...state.messagesByChatId,
-						[chatUid]: sortMessagesBySeq(msgs, "asc"),
+						[chatUid]: sortedMessages,
 					},
 					isLoading: false,
 				}));

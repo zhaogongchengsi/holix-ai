@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { onUpdate } from "@/lib/command";
 import useMessage from "@/store/message";
 
@@ -39,13 +39,22 @@ export function useMessageUpdates() {
 	}, [addMessage]);
 }
 
+// 空数组常量，避免每次都创建新实例
+const EMPTY_MESSAGES: never[] = [];
+
 /**
  * 获取指定 chat 的消息
  */
 export function useChatMessages(chatUid: string | undefined) {
-	return useMessage((state) =>
-		chatUid ? state.messagesByChatId[chatUid] || [] : [],
+	// 使用 selector 获取特定 chat 的消息数组
+	const messages = useMessage((state) =>
+		chatUid ? state.messagesByChatId[chatUid] : undefined
 	);
+	
+	// 使用 useMemo 缓存结果，避免每次返回新数组引用
+	return useMemo(() => {
+		return messages || EMPTY_MESSAGES;
+	}, [messages]);
 }
 
 export function useIsMessageLoading() {
