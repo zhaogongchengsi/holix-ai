@@ -4,6 +4,7 @@ import { Editor } from "@/components/editor/editor";
 import ProviderModelSelector from "@/components/provider-model-selector";
 import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/context/chat";
+import { useSettingsPanel } from "@/context/settings-panel";
 import { command } from "@/lib/command";
 import { trpcClient } from "@/lib/trpc-client";
 import { estimateTokens, formatTokenCount } from "../../share/token";
@@ -11,6 +12,7 @@ import { estimateTokens, formatTokenCount } from "../../share/token";
 export default function MainFooter() {
 	const [value, setValue] = useState("");
 	const { chat } = useChatContext();
+	const { toggle: toggleSettingsPanel } = useSettingsPanel();
 	const [_, setProvider] = useState<string | undefined>(
 		chat?.provider ?? undefined,
 	);
@@ -81,10 +83,7 @@ export default function MainFooter() {
 						variant="ghost"
 						size="sm"
 						className="h-7 w-7 p-0"
-						onClick={() => {
-							// TODO: 打开设置对话框
-							console.log("Open settings");
-						}}
+						onClick={toggleSettingsPanel}
 						title="设置"
 					>
 						<Settings className="w-4 h-4" />
