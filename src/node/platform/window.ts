@@ -1,7 +1,5 @@
-import { resolve as pathResolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import type { HolixProtocolRouter } from "@holix/router";
-import { BrowserWindow, protocol } from "electron";
+import { BrowserWindow } from "electron";
 import { configStore } from "./config";
 import { update } from "./update";
 
@@ -79,6 +77,8 @@ export class AppWindow extends BrowserWindow {
 			// if (currentChatId) {
 			// 	url = url.concat(`chat/${currentChatId}`);
 			// }
+
+			console.log("Loading URL:", url);
 
 			import.meta.env.DEV ? this.loadURL(url) : this.loadURL(url);
 
