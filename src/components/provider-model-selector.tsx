@@ -73,7 +73,7 @@ export default function ProviderModelSelector({
     };
 
     init();
-  }, [propInitialProvider, propInitialModel, triggerOnInitialize]);
+  }, [propInitialProvider, propInitialModel, triggerOnInitialize, onModelChange, onProviderChange]);
 
   const handleProviderChange = useCallback(
     (providerName: string) => {
@@ -82,7 +82,7 @@ export default function ProviderModelSelector({
 
       // 切换供应商时，自动选择第一个模型
       const provider = providers.find((p) => p.name === providerName);
-      if (provider && provider.models && provider.models.length > 0) {
+      if (provider?.models && provider.models.length > 0) {
         const firstModel = provider.models[0];
         setSelectedModel(firstModel);
         onModelChange?.(firstModel);
