@@ -21,8 +21,6 @@ export class AppWindow extends BrowserWindow {
 			trafficLightPosition: { x: 10, y: 10 },
 		});
 
-
-
 		this.on("resized", async () => {
 			const [width, height] = this.getSize();
 			await configStore.set("window", { width, height });
@@ -72,13 +70,15 @@ export class AppWindow extends BrowserWindow {
 
 	showWhenReady() {
 		return new Promise<void>((resolve) => {
-			const currentChatId = configStore.get("currentChatId");
+			// const currentChatId = configStore.get("currentChatId");
 
-			let url = import.meta.env.DEV ? import.meta.env.BASE_URL : "holix://app/";
+			const url = import.meta.env.DEV
+				? import.meta.env.BASE_URL
+				: "holix://app/";
 
-			if (currentChatId) {
-				url = url.concat(`chat/${currentChatId}`);
-			}
+			// if (currentChatId) {
+			// 	url = url.concat(`chat/${currentChatId}`);
+			// }
 
 			import.meta.env.DEV ? this.loadURL(url) : this.loadURL(url);
 

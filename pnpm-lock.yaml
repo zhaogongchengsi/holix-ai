@@ -12,8 +12,8 @@ importers:
         specifier: ^0.0.3
         version: 0.0.3
       '@holix/static':
-        specifier: ^0.0.3
-        version: 0.0.3(@holix/router@0.0.3)
+        specifier: ^0.0.5
+        version: 0.0.5(@holix/router@0.0.3)
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.69.0(react@19.2.3))
@@ -1012,10 +1012,10 @@ packages:
   '@holix/router@0.0.3':
     resolution: {integrity: sha512-PjWuFcbz1oL5r5LdvyEG1wjTHM4vuEAZqiUIbe5NhnR3j5x9+5hFpBD1I2fA8AjW3zUARUNsErRYq/RBH1u7og==}
 
-  '@holix/static@0.0.3':
-    resolution: {integrity: sha512-QH//mfdWNUHE045bcdjnqQA769p54xFO1t3nfiKSgMsQGDF4nFyEZ1rf5ymcGW5xwxRd5vp4k6tbkmnbBbkYRA==}
+  '@holix/static@0.0.5':
+    resolution: {integrity: sha512-6g4EPVFp5h3K2yrcFdBubxd9P6ipKyd78uzEajeJb1HoyjAKdO0TjoxTZsWreR+nO0pI2mnxpMfj4habvAyelg==}
     peerDependencies:
-      '@holix/router': ^0.0.1
+      '@holix/router': ^0.0.3
 
   '@hono/node-server@1.19.7':
     resolution: {integrity: sha512-vUcD0uauS7EU2caukW8z5lJKtoGMokxNbJtBiwHgpqxEXokaHCBkQUmCHhjFB1VUTWdqj25QoMkMKzgjq+uhrw==}
@@ -6260,7 +6260,7 @@ snapshots:
       '@zunh/onion': 0.1.1-beta.2
       radix3: 1.1.2
 
-  '@holix/static@0.0.3(@holix/router@0.0.3)':
+  '@holix/static@0.0.5(@holix/router@0.0.3)':
     dependencies:
       '@holix/router': 0.0.3
       micromatch: 4.0.8

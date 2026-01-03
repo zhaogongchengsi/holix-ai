@@ -35,15 +35,16 @@ onCommandForClient(router);
 trpcRouter(router);
 router.get("/channel", createChannel());
 
-const root = import.meta.env.BASE_URL.replace("file://", "");
-
-console.log(root, resolve(import.meta.dirname,"../client"));
-
 if (import.meta.env.PROD) {
 	router.use(
 		createStaticMiddleware({
-			root: resolve(import.meta.dirname,"../client"),
-			prefix: "/page",
+			root: resolve(import.meta.dirname, "../client"),
+			prefix: "/",
+			ignorePaths: ["/api/**", "/channel/**", '/trpc/**', "/command/**", "/config/**", "/providers/**", "window/**"],
+			mimeTypes: {
+				".js": "application/javascript; charset=utf-8",
+				".css": "text/css; charset=utf-8",
+			}
 		}),
 	);
 }
