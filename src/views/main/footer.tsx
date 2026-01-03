@@ -6,10 +6,13 @@ import { Button } from "@/components/ui/button";
 import { useChatContext } from "@/context/chat";
 import { command } from "@/lib/command";
 import { estimateTokens, formatTokenCount } from "@/share/token";
+import ProviderModelSelector from "@/components/provider-model-selector";
 
 export default function MainFooter() {
   const [value, setValue] = useState("");
   const { chat } = useChatContext();
+  const [provider, setProvider] = useState<string | undefined>(chat?.provider ?? undefined);
+  const [model, setModel] = useState<string | undefined>(chat?.model ?? undefined);
 
   const onTextChange = useCallback((text: string) => {
     setValue(text);
@@ -68,8 +71,11 @@ export default function MainFooter() {
         />
       </div>
 
-      <div className="flex justify-end items-center h-(--app-chat-input-footer-height) px-2">
-        <Button disabled={!chat || value.trim().length === 0} onClick={onSend}>
+      <div className="flex items-center h-(--app-chat-input-footer-height) px-2">
+        <div>
+          <ProviderModelSelector onProviderChange={setProvider} onModelChange={setModel} />
+        </div>
+        <Button className="ml-auto" disabled={!chat || value.trim().length === 0} onClick={onSend}>
           <Send />
           Send
         </Button>

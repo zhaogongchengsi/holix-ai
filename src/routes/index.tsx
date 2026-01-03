@@ -1,9 +1,11 @@
 import { debounce } from "@tanstack/pacer/debouncer";
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { Coins } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Editor } from "@/components/editor/editor";
 import ProviderModelSelector from "@/components/provider-model-selector";
 import { Button } from "@/components/ui/button";
+import { estimateTokens, formatTokenCount } from "@/share/token";
 import useChat from "@/store/chat";
 
 // 从 value 中提取标题：取前面部分内容
@@ -40,6 +42,8 @@ function Index() {
     [],
   );
 
+  const estimatedTokens = useMemo(() => estimateTokens(value), [value]);
+
   const onSend = useCallback(() => {
     if (value.trim().length === 0) return;
     if (!model || !provider) return;
@@ -61,20 +65,23 @@ function Index() {
 
   return (
     <div className="w-full flex justify-center items-center">
-      <div className="w-full max-w-2xl p-4 flex flex-col gap-4">
+      <div className="w-full max-w-3xl p-4 flex flex-col gap-4">
         <h2 className="text-center font-bold text-xl">Chat with Holix AI</h2>
         <Editor
           placeholder="请输入问题"
           ariaPlaceholder="请输入问题"
-          rootClassName="min-h-[100px]"
+          rootClassName="min-h-[200px]"
           onError={(err) => {
             console.error(`editor:`, err ? err.message : "unknown error");
           }}
           onTextChange={onTextChange}
         />
-
         <div className="flex items-center gap-2">
           <ProviderModelSelector onProviderChange={setProvider} onModelChange={setModel} />
+          <div className="text-sm text-muted-foreground flex items-center gap-1.5">
+            <Coins className="w-4 h-4" />
+            <span>{formatTokenCount(estimatedTokens)}</span>
+          </div>
           <Button className="ml-auto" onClick={onSend} disabled={!model || !provider || value.trim().length === 0}>
             发送
           </Button>
