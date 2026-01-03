@@ -2,9 +2,8 @@ import { debounce } from "@tanstack/pacer/debouncer";
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { Editor } from "@/components/editor/editor";
-import ModuleSelector from "@/components/module-selectr";
+import ProviderModelSelector from "@/components/provider-model-selector";
 import { Button } from "@/components/ui/button";
-import { inferProvider } from "@/share/models";
 import useChat from "@/store/chat";
 
 // 从 value 中提取标题：取前面部分内容
@@ -21,6 +20,7 @@ const generateTitle = (text: string) => {
 
 function Index() {
   const [value, setValue] = useState("");
+  const [provider, setProvider] = useState<string | undefined>();
   const [model, setModel] = useState<string | undefined>();
   const chat = useChat();
 
@@ -42,13 +42,7 @@ function Index() {
 
   const onSend = useCallback(() => {
     if (value.trim().length === 0) return;
-    if (!model) return;
-    const provider = inferProvider(model);
-
-    if (!provider) {
-      console.error(`Cannot infer provider for model: ${model}`);
-      return;
-    }
+    if (!model || !provider) return;
 
     const title = generateTitle(value);
 
@@ -63,7 +57,7 @@ function Index() {
       .catch((err) => {
         console.error("Failed to create chat:", err);
       });
-  }, [value, model, chat.createChat]);
+  }, [value, model, provider, chat.createChat]);
 
   return (
     <div className="w-full flex justify-center items-center">
@@ -80,8 +74,8 @@ function Index() {
         />
 
         <div className="flex items-center gap-2">
-          <ModuleSelector value={model} onValueChange={(v) => setModel(v)} persistKey="holix:selectedModel" />
-          <Button className="ml-auto" onClick={onSend} disabled={!model || value.trim().length === 0}>
+          <ProviderModelSelector onProviderChange={setProvider} onModelChange={setModel} />
+          <Button className="ml-auto" onClick={onSend} disabled={!model || !provider || value.trim().length === 0}>
             发送
           </Button>
         </div>

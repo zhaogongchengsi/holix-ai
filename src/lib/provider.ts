@@ -26,7 +26,7 @@ export async function toggleProvider(name: string, enabled: boolean) {
 }
 
 export async function getDefaultProvider() {
-	return await kyInstance.get("providers/default").json<string | null>();
+	return await kyInstance.get("providers/default").text();
 }
 
 export async function setDefaultProvider(name: string) {
