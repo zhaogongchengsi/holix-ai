@@ -6,26 +6,34 @@ import { useRef } from "react";
 
 export function MainContent() {
   const { chat } = useChatContext();
-  const virtuoso = useRef(null);
+  const virtuosoRef = useRef(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  // 使用优化的 Hook，带浅比较
+
   const messages = useChatMessages(chat?.uid);
 
+  const isAtBottomRef = useRef(true);
+  const initialIndex = useRef<number | null>(null);
+
+  if (initialIndex.current === null && messages.length > 0) {
+    initialIndex.current = messages.length - 1;
+  }
+
   return (
-    <main className="h-(--app-chat-content-height)" ref={wrapperRef}>
+    <main ref={wrapperRef} className="h-(--app-chat-content-height)">
       <Virtuoso
-        ref={virtuoso}
-        style={{ height: "var(--app-chat-content-height)" }}
+        ref={virtuosoRef}
         data={messages}
-        followOutput="smooth"
+        style={{ height: "var(--app-chat-content-height)" }}
         className="custom-scrollbar"
-        initialTopMostItemIndex={{
-          index: messages.length - 1,
-          align: "end",
+        increaseViewportBy={{ top: 0, bottom: 200 }}
+        followOutput={(isAtBottom) => (isAtBottom ? "smooth" : false)}
+        atBottomStateChange={(bottom) => {
+          isAtBottomRef.current = bottom;
         }}
-        itemContent={(index, msg) => {
-          return <MessageItem index={index} key={msg.uid} message={msg} />;
-        }}
+        initialTopMostItemIndex={
+          initialIndex.current != null ? { index: initialIndex.current, align: "end" } : undefined
+        }
+        itemContent={(index, msg) => <MessageItem key={msg.uid} index={index} message={msg} />}
       />
     </main>
   );
