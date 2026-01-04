@@ -17,6 +17,7 @@ export function MainContent() {
         ref={virtuoso}
         style={{ height: "var(--app-chat-content-height)" }}
         data={messages}
+        followOutput="smooth"
         className="custom-scrollbar"
         initialTopMostItemIndex={{
           index: messages.length - 1,
