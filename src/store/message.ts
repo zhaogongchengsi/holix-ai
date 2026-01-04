@@ -1,56 +1,69 @@
-import { create } from "zustand";
+import { createWithEqualityFn } from "zustand/traditional";
+import { shallow } from "zustand/shallow";
 import { trpcClient } from "@/lib/trpc-client";
 import type { Message } from "@/node/database/schema/chat";
 
+/* =========================================================
+ * 冷路径工具：消息排序（只允许 init / load 使用）
+ * =======================================================*/
+
 /**
- * 按 seq 字段排序消息
- * @param messages - 消息数组
- * @param order - 排序方式，'asc' 为升序，'desc' 为降序
- * @returns 排序后的消息数组
+ * 冷路径：按 seq 升序排序消息
+ * ⚠️ 禁止在实时更新 / stream 路径中使用
  */
-export function sortMessagesBySeq(
-	messages: Message[],
-	order: "asc" | "desc" = "asc",
+function sortMessagesBySeqAscCold(
+	messages: readonly Message[],
 ): Message[] {
-	return [...messages].sort((a, b) => {
-		if (order === "asc") {
-			return a.seq - b.seq;
-		}
-		return b.seq - a.seq;
-	});
+	if (messages.length <= 1) return messages.slice();
+	return [...messages].sort((a, b) => a.seq - b.seq);
 }
 
+/* =========================================================
+ * Store 定义
+ * =======================================================*/
+
 interface MessageStore {
-	// 使用对象而不是 Map，便于 React 追踪变化
 	messagesByChatId: Record<string, Message[]>;
 	isLoading: boolean;
 	initialized: boolean;
-	// 初始化所有消息
-	init: () => Promise<void>;
-	// 加载指定会话的消息
-	loadMessages: (chatUid: string) => Promise<void>;
-	// 添加消息到指定会话
-	addMessage: (chatUid: string, message: Message) => void;
-	// 批量添加消息
-	addMessages: (chatUid: string, messages: Message[]) => void;
-	// 更新消息
-	updateMessage: (chatUid: string, messageUid: string, updates: Partial<Message>) => void;
+
+	/* 冷路径 */
+	init(): Promise<void>;
+	loadMessages(chatUid: string): Promise<void>;
+
+	/* 热路径 */
+	appendMessage(chatUid: string, message: Message): void;
+	appendMessages(chatUid: string, messages: Message[]): void;
+	prependMessages(chatUid: string, messages: Message[]): void;
+
+	updateMessage(
+		chatUid: string,
+		messageUid: string,
+		updates: Partial<Message>
+	): void;
 }
 
-const useMessage = create<MessageStore>((set, get) => {
-	return {
+/* =========================================================
+ * Store 实现（Virtuoso / AI Chat 特化）
+ * =======================================================*/
+
+export const useMessageStore = createWithEqualityFn<MessageStore>()(
+	(set, get) => ({
 		messagesByChatId: {},
 		isLoading: false,
 		initialized: false,
 
-		init: async () => {
+		/* ---------- 冷路径 ---------- */
+
+		async init() {
 			if (get().initialized) return;
-			
+
+			set({ isLoading: true });
+
 			try {
-				set({ isLoading: true });
 				const chats = await trpcClient.chat.list();
 				const messagesByChatId: Record<string, Message[]> = {};
-				
+
 				await Promise.all(
 					chats.map(async (chat) => {
 						const msgs = await trpcClient.message.getByChatUid({
@@ -58,110 +71,130 @@ const useMessage = create<MessageStore>((set, get) => {
 							limit: 200,
 							order: "asc",
 						});
-						messagesByChatId[chat.uid] = sortMessagesBySeq(msgs, "asc");
-					})
+
+						// ✅ 冷路径排序
+						messagesByChatId[chat.uid] = sortMessagesBySeqAscCold(msgs);
+					}),
 				);
-				
-				set({ messagesByChatId, isLoading: false, initialized: true });
-			} catch (error) {
-				console.error("Failed to load messages:", error);
+
+				set({
+					messagesByChatId,
+					initialized: true,
+					isLoading: false,
+				});
+			} catch (err) {
+				console.error("[message-store] init failed", err);
 				set({ isLoading: false });
 			}
 		},
 
-		loadMessages: async (chatUid: string) => {
+		async loadMessages(chatUid) {
+			set({ isLoading: true });
+
 			try {
-				set({ isLoading: true });
 				const msgs = await trpcClient.message.getByChatUid({
 					chatUid,
 					limit: 200,
 					order: "asc",
 				});
-				
-				const sortedMessages = sortMessagesBySeq(msgs, "asc");
-				
+
 				set((state) => ({
 					messagesByChatId: {
 						...state.messagesByChatId,
-						[chatUid]: sortedMessages,
+						// ✅ 冷路径排序
+						[chatUid]: sortMessagesBySeqAscCold(msgs),
 					},
 					isLoading: false,
 				}));
-			} catch (error) {
-				console.error("Failed to load messages:", error);
+			} catch (err) {
+				console.error("[message-store] loadMessages failed", err);
 				set({ isLoading: false });
 			}
 		},
 
-		addMessage: (chatUid: string, message: Message) => {
+		/* ---------- 热路径（不允许排序） ---------- */
+
+		appendMessage(chatUid, message) {
 			set((state) => {
-				const currentMessages = state.messagesByChatId[chatUid] || [];
-				// 检查消息是否已存在，避免重复添加
-				if (currentMessages.some(m => m.uid === message.uid)) {
+				const current = state.messagesByChatId[chatUid] || [];
+
+				// 防重复
+				if (current.some((m) => m.uid === message.uid)) {
 					return state;
 				}
-				
-				const updatedMessages = [...currentMessages, message];
-				
+
 				return {
 					messagesByChatId: {
 						...state.messagesByChatId,
-						[chatUid]: sortMessagesBySeq(updatedMessages, "asc"),
+						[chatUid]: [...current, message], // ❌ 不排序
 					},
 				};
 			});
 		},
 
-		addMessages: (chatUid: string, messages: Message[]) => {
+		appendMessages(chatUid, messages) {
+			if (messages.length === 0) return;
+
 			set((state) => {
-				const currentMessages = state.messagesByChatId[chatUid] || [];
-				const currentUids = new Set(currentMessages.map(m => m.uid));
-				
-				// 只添加不存在的消息
-				const newMessages = messages.filter(m => !currentUids.has(m.uid));
-				if (newMessages.length === 0) {
-					return state;
-				}
-				
-				const updatedMessages = [...currentMessages, ...newMessages];
-				
+				const current = state.messagesByChatId[chatUid] || [];
+				const existing = new Set(current.map((m) => m.uid));
+
+				const incoming = messages.filter(
+					(m) => !existing.has(m.uid),
+				);
+
+				if (incoming.length === 0) return state;
+
 				return {
 					messagesByChatId: {
 						...state.messagesByChatId,
-						[chatUid]: sortMessagesBySeq(updatedMessages, "asc"),
+						[chatUid]: [...current, ...incoming], // ❌ 不排序
 					},
 				};
 			});
 		},
 
-		updateMessage: (chatUid: string, messageUid: string, updates: Partial<Message>) => {
+		prependMessages(chatUid, messages) {
+			if (messages.length === 0) return;
+
 			set((state) => {
-				const currentMessages = state.messagesByChatId[chatUid];
-				if (!currentMessages) {
-					return state;
-				}
+				const current = state.messagesByChatId[chatUid] || [];
 
-				const messageIndex = currentMessages.findIndex(m => m.uid === messageUid);
-				if (messageIndex === -1) {
-					return state;
-				}
+				return {
+					messagesByChatId: {
+						...state.messagesByChatId,
+						[chatUid]: [...messages, ...current], // ❌ 不排序
+					},
+				};
+			});
+		},
 
-				// 创建新的消息数组，更新指定消息
-				const updatedMessages = [...currentMessages];
-				updatedMessages[messageIndex] = {
-					...updatedMessages[messageIndex],
+		updateMessage(chatUid, messageUid, updates) {
+			set((state) => {
+				const current = state.messagesByChatId[chatUid];
+				if (!current) return state;
+
+				const index = current.findIndex(
+					(m) => m.uid === messageUid,
+				);
+				if (index === -1) return state;
+
+				const next = [...current];
+				next[index] = {
+					...next[index],
 					...updates,
 				};
 
 				return {
 					messagesByChatId: {
 						...state.messagesByChatId,
-						[chatUid]: updatedMessages,
+						// ✅ index 稳定，Virtuoso 友好
+						[chatUid]: next,
 					},
 				};
 			});
 		},
-	};
-});
+	}),
+	shallow,
+);
 
-export default useMessage;
