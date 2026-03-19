@@ -105,21 +105,21 @@ vi.mock('electron', () => ({
   },
 }))
 
-vi.mock('../chat', () => ({
+vi.mock('../builtin/chat', () => ({
   chatKeywordSearchTool: { name: 'chat_keyword_search' },
   chatTimeSearchTool: { name: 'chat_time_search' },
 }))
 
-vi.mock('../context7', () => ({
+vi.mock('../builtin/context7', () => ({
   context7Tool: { name: 'context7' },
 }))
 
-vi.mock('../skills', () => ({
+vi.mock('../../skills/tools', () => ({
   buildLoadSkillTool: vi.fn(() => ({ name: 'load_skill' })),
   reloadSkillsTool: { name: 'reload_skills' },
 }))
 
-vi.mock('../system', () => ({
+vi.mock('../builtin/system', () => ({
   systemEnvTool: { name: 'system_env' },
   systemPlatformTool: { name: 'system_platform' },
   systemTimeTool: { name: 'system_time' },

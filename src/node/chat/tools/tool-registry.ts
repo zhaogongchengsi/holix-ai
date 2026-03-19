@@ -7,10 +7,10 @@ import type { DynamicStructuredTool } from '@langchain/core/tools'
 import { configStore } from '../../platform/config'
 import { logger } from '../../platform/logger'
 import { skillManager } from '../skills/manager'
-import { chatKeywordSearchTool, chatTimeSearchTool } from './chat'
-import { context7Tool } from './context7'
-import { buildLoadSkillTool, reloadSkillsTool } from './skills'
-import { systemEnvTool, systemPlatformTool, systemTimeTool, systemTimezoneTool } from './system'
+import { chatKeywordSearchTool, chatTimeSearchTool } from './builtin/chat'
+import { context7Tool } from './builtin/context7'
+import { buildLoadSkillTool, reloadSkillsTool } from '../skills/tools'
+import { systemEnvTool, systemPlatformTool, systemTimeTool, systemTimezoneTool } from './builtin/system'
 
 /**
  * 工具加载策略

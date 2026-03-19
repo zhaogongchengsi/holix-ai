@@ -34,7 +34,7 @@ vi.mock('../../tools/approval', () => ({
   wrapWithApproval: (tool: any) => tool,
 }))
 
-vi.mock('../../tools/skill-invocation', () => ({
+vi.mock('../skill-invocation', () => ({
   wrapWithSkillInvocationLog: (tool: any) => tool,
 }))
 
