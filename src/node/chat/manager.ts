@@ -35,10 +35,10 @@ import { logger } from '../platform/logger'
 import { update } from '../platform/update'
 import { contextSchema } from './context'
 import { skillManager } from './skills'
-import { chatKeywordSearchTool, chatTimeSearchTool } from './tools/chat'
-import { context7Tool } from './tools/context7'
-import { buildLoadSkillTool, reloadSkillsTool } from './tools/skills'
-import { systemEnvTool, systemPlatformTool, systemTimeTool, systemTimezoneTool } from './tools/system'
+import { chatKeywordSearchTool, chatTimeSearchTool } from './tools/builtin/chat'
+import { context7Tool } from './tools/builtin/context7'
+import { buildLoadSkillTool, reloadSkillsTool } from './skills/tools'
+import { systemEnvTool, systemPlatformTool, systemTimeTool, systemTimezoneTool } from './tools/builtin/system'
 /** 流处理时传递给各 handler 的只读会话上下文 */
 interface StreamSessionCtx {
   chatUid: string

@@ -1,7 +1,7 @@
 import { DynamicStructuredTool as DynamicStructuredToolImpl } from '@langchain/core/tools'
 import { describe, expect, it, vi } from 'vitest'
 import z from 'zod'
-import { wrapWithSkillInvocationLog } from '../skill-invocation'
+import { wrapWithSkillInvocationLog } from '../../skills/skill-invocation'
 
 const mockRecordSkillInvocation = vi.hoisted(() => vi.fn())
 
