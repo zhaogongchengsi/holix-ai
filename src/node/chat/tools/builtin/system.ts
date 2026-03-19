@@ -2,7 +2,7 @@ import os from 'node:os'
 import process from 'node:process'
 import { tool } from 'langchain'
 import z from 'zod'
-import { logger } from '../../platform/logger'
+import { logger } from '../../../platform/logger'
 
 export const systemPlatformTool = tool(
   async () => {
