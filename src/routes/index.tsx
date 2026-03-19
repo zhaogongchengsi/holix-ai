@@ -113,29 +113,33 @@ function Index() {
             if (e.key === 'Enter' && !e.shiftKey)
               onSend()
           }}
+          className="h-11 rounded-xl border-border/70 bg-card/70 shadow-sm"
         />
-        <Editor
-          placeholder={t('home.inputPlaceholder')}
-          ariaPlaceholder={t('home.inputPlaceholder')}
-          rootClassName="min-h-[200px]"
-          onError={(err) => {
-            console.error(`editor:`, err ? err.message : 'unknown error')
-          }}
-          onTextChange={onTextChange}
-          keyboard={{
-            onEnter: onSend,
-          }}
-        />
-        <div className="flex items-center gap-2">
-          <ProviderModelSelector triggerOnInitialize onProviderChange={setProvider} onModelChange={setModel} />
-          <div className="text-sm text-muted-foreground flex items-center gap-1.5">
-            <Coins className="w-4 h-4" />
-            <span>{formatTokenCount(estimatedTokens)}</span>
+        <section className="rounded-3xl border border-border/70 bg-card/90 shadow-[0_8px_30px_-18px_rgba(0,0,0,0.45)] backdrop-blur-sm px-4 py-3">
+          <Editor
+            placeholder={t('home.inputPlaceholder')}
+            ariaPlaceholder={t('home.inputPlaceholder')}
+            rootClassName="!min-h-[170px] !rounded-2xl !border-0 !bg-transparent !px-1 !py-1 !shadow-none focus-visible:!ring-0"
+            wrapperClassName="min-h-[170px]"
+            onError={(err) => {
+              console.error(`editor:`, err ? err.message : 'unknown error')
+            }}
+            onTextChange={onTextChange}
+            keyboard={{
+              onEnter: onSend,
+            }}
+          />
+          <div className="mt-3 flex items-center gap-2 border-t border-border/60 pt-3">
+            <ProviderModelSelector triggerOnInitialize onProviderChange={setProvider} onModelChange={setModel} />
+            <div className="text-sm text-muted-foreground flex items-center gap-1.5 rounded-full border border-border/70 px-2.5 py-1">
+              <Coins className="w-4 h-4" />
+              <span>{formatTokenCount(estimatedTokens)}</span>
+            </div>
+            <Button className="ml-auto rounded-xl" onClick={onSend} disabled={!canSend}>
+              {hasTitle && !hasContent ? t('home.createChat') : t('common.send')}
+            </Button>
           </div>
-          <Button className="ml-auto" onClick={onSend} disabled={!canSend}>
-            {hasTitle && !hasContent ? t('home.createChat') : t('common.send')}
-          </Button>
-        </div>
+        </section>
       </div>
     </div>
   )
