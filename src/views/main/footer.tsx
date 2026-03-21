@@ -226,7 +226,7 @@ export default function MainFooter() {
   }, [pendingMessages])
 
   return (
-    <footer className="relative w-full mt-auto h-(--app-chat-footer-height) border-t transition-colors duration-300" style={{ backgroundColor: 'var(--region-input)', borderColor: 'var(--border)' }}>
+    <footer className="relative w-full mt-auto h-(--app-chat-footer-height) transition-colors duration-300 px-3 pb-3" style={{ backgroundColor: 'var(--region-input)' }}>
       {/* 回到底部浮动按钮：当用户滚动到远离底部时出现 */}
       <AnimatePresence>
         {!isAtBottom && (
@@ -250,61 +250,65 @@ export default function MainFooter() {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="h-(--app-chat-input-header-height) border-b px-2 flex items-center justify-between">
-        <div className="mr-auto">
-          <DraftsView onEdit={onDraftEdit} onSend={onDraftSend} onDelete={onDraftDelete} />
+      <div className="h-full rounded-3xl border border-border/70 bg-card/90 shadow-[0_8px_30px_-18px_rgba(0,0,0,0.45)] backdrop-blur-sm px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="mr-auto">
+            <DraftsView onEdit={onDraftEdit} onSend={onDraftSend} onDelete={onDraftDelete} />
+          </div>
+          <div className="text-sm text-muted-foreground flex ml-auto items-center gap-2">
+            <div className="flex items-center gap-1.5 rounded-full border border-border/70 px-2.5 py-1">
+              <Coins className="w-4 h-4" />
+              <span>{formatTokenCount(estimatedTokens)}</span>
+            </div>
+            <SelectionToggle />
+            <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full p-0" onClick={toggleSettingsPanel} title="设置">
+              <Settings className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
-        <div className="text-sm text-muted-foreground flex ml-auto items-center gap-2">
-          <Coins className="w-4 h-4" />
-          <span>{formatTokenCount(estimatedTokens)}</span>
-          <SelectionToggle />
-          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={toggleSettingsPanel} title="设置">
-            <Settings className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
-      <div className="h-(--app-chat-input-height) my-(--app-chat-input-gap) px-2">
-        <Editor
-          ref={editorRef}
-          placeholder="请输入问题"
-          ariaPlaceholder="请输入问题"
-          rootClassName="min-h-(--app-chat-input-height)"
-          wrapperClassName="h-(--app-chat-input-height)"
-          onError={(err) => {
-            console.error(`editor:`, err ? err.message : 'unknown error')
-          }}
-          onTextChange={onTextChange}
-          keyboard={{
-            onEnter: () => {
-              onSend()
-              return true
-            },
-            onShiftEnter: () => {
-              // Shift+Enter 允许换行
-              return false
-            },
-            onCtrlS: () => {
-              onSaveDraft()
-              return true
-            },
-          }}
-          autocomplete={autocompleteConfig}
-        />
-      </div>
-
-      <div className="flex items-center h-(--app-chat-input-footer-height) px-2">
-        <div>
-          <ProviderModelSelector
-            initialProvider={chat?.provider}
-            initialModel={chat?.model}
-            onProviderChange={handleProviderChange}
-            onModelChange={handleModelChange}
+        <div className="my-2.5">
+          <Editor
+            ref={editorRef}
+            placeholder="请输入问题"
+            ariaPlaceholder="请输入问题"
+            rootClassName="!min-h-(--app-chat-input-height) !rounded-2xl !border-0 !bg-transparent !px-1 !py-1 !shadow-none focus-visible:!ring-0"
+            wrapperClassName="h-(--app-chat-input-height)"
+            onError={(err) => {
+              console.error(`editor:`, err ? err.message : 'unknown error')
+            }}
+            onTextChange={onTextChange}
+            keyboard={{
+              onEnter: () => {
+                onSend()
+                return true
+              },
+              onShiftEnter: () => {
+                // Shift+Enter 允许换行
+                return false
+              },
+              onCtrlS: () => {
+                onSaveDraft()
+                return true
+              },
+            }}
+            autocomplete={autocompleteConfig}
           />
         </div>
-        <Button className="ml-auto" disabled={!chat || value.trim().length === 0} onClick={onSend}>
-          <Send />
-          Send
-        </Button>
+
+        <div className="flex items-center border-t border-border/60 pt-2.5">
+          <div>
+            <ProviderModelSelector
+              initialProvider={chat?.provider}
+              initialModel={chat?.model}
+              onProviderChange={handleProviderChange}
+              onModelChange={handleModelChange}
+            />
+          </div>
+          <Button className="ml-auto rounded-xl" disabled={!chat || value.trim().length === 0} onClick={onSend}>
+            <Send />
+            Send
+          </Button>
+        </div>
       </div>
     </footer>
   )
