@@ -1,6 +1,7 @@
 import {
   getChatByUid,
   updateLastMessagePreview,
+  updateChatTitle,
 } from '../database/chat-operations'
 import { createUserMessage, getLatestMessages } from '../database/message-operations'
 import { DEFAULT_CHAT_CONTEXT_SETTINGS } from '../database/schema/chat'
@@ -11,8 +12,16 @@ import { providerStore } from '../platform/provider'
 import { update } from '../platform/update'
 import { createLlm } from './llm'
 import { sessionOrchestrator } from './session-orchestrator'
+import { initializeOrchestrator } from '../agents/lifecycle/orchestrator'
+import { BUILTIN_LIFECYCLE_AGENTS } from '../agents/lifecycle/builtin'
 
 export function initChat() {
+  // Initialize lifecycle orchestrator and register built-in agents
+  const orchestrator = initializeOrchestrator(5000)
+  for (const agent of BUILTIN_LIFECYCLE_AGENTS) {
+    orchestrator.registerAgent(agent, ['onMessageCompleted'], 10)
+    logger.info(`[Lifecycle] Registered agent: ${agent.id}`)
+  }
   // 监听聊天消息发送
   onCommand('chat.message', async (payload) => {
     const { chatId, content, replyTo, agent: agentName } = payload
@@ -115,6 +124,33 @@ export function initChat() {
     logger.info(
       `[Chat] Started session ${requestId} for chat ${chatId} with user message ${userMessage.uid}`,
     )
+
+    // Trigger lifecycle hooks (async, don't await)
+    orchestrator.triggerHook('onMessageCompleted', chatId).then((results) => {
+      logger.info(`[Lifecycle] Executed ${results.length} agents for chat ${chatId}`)
+
+      // Process suggestions
+      for (const result of results) {
+        if (result.status === 'suggest' && result.suggestion) {
+          logger.info(
+            `[Lifecycle] Agent ${result.agentId} suggests: ${result.suggestion.type} - ${result.suggestion.content}`,
+          )
+
+          // Apply title suggestions
+          if (result.suggestion.type === 'title') {
+            updateChatTitle(chatId, result.suggestion.content).then(() => {
+              update('chat.updated', {
+                chatUid: chatId,
+                updates: { title: result.suggestion!.content },
+              })
+              logger.info(`[Lifecycle] Updated chat ${chatId} title to: ${result.suggestion!.content}`)
+            })
+          }
+        }
+      }
+    }).catch((error) => {
+      logger.error(`[Lifecycle] Failed to execute agents for chat ${chatId}:`, error)
+    })
   })
 
   // 监听中止请求
